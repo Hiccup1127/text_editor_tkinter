@@ -22,13 +22,13 @@ class Application(tk.Tk):
         self.tab2 = TabFrame(self)
         self.notebook.add(self.tab2, text="untitled1")
 
-        i = 1.0
-        for tab in self.notebook.tabs():
+        # i = 1.0
+        # for tab in self.notebook.tabs():
             
-            self.tab1.text_screen.insert(i, f"{tab}\n")
-            i += 1
+        #     self.tab1.text_screen.insert(i, f"{tab}\n")
+        #     i += 1
         
-        self.tab1.text_screen.insert(i+1, len(self.notebook.tabs()))
+        # self.tab1.text_screen.insert(i+1, len(self.notebook.tabs()))
 
 
         self.bind("q", lambda e: self.destroy())
@@ -62,8 +62,12 @@ class MainNotebook(ttk.Notebook):
             return "break"
 
     def on_close_release(self, event):
-        tab = self.select(len(self.tabs())-2)
-        self.forget(tab)
+        tab = self.tabs()[-1]
+        element = self.identify(event.x, event.y)
+
+        if "close" in element:
+            print(tab)
+            self.forget(tab)
 
 
 class TabFrame(ttk.Frame):
