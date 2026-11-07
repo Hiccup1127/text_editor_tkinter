@@ -2,6 +2,7 @@ import tkinter as tk
 import tkinter.ttk as ttk
 import ttkbootstrap as ttk
 import tkinter.scrolledtext as st
+import top_menu
 
 
 class Application(tk.Tk):
@@ -15,6 +16,10 @@ class Application(tk.Tk):
 
         self.tab1 = TabFrame(self)
         self.notebook.add_new(self.tab1, "new")
+
+
+        self.top_menu = top_menu.MainMenu(self)
+        self.config(menu=self.top_menu)
 
 
         self.bind("q", lambda e: self.destroy())
@@ -36,15 +41,21 @@ class MainNotebook(ttk.Notebook):
         self.insert(len(self.tabs())-1, self.new_tab, text="+")
     
     def new_tab_click(self, event):
-        current_index = self.index(f"@{event.x},{event.y}")
-        if current_index==self.index(self.new_tab):
-            tab_to_add = TabFrame(self)
-            self.add_new(tab_to_add)
-            self.insert(len(self.tabs())-1, self.new_tab, text="+")
-    
+        try:
+            current_index = self.index(f"@{event.x},{event.y}")
+            if current_index==self.index(self.new_tab):
+                tab_to_add = TabFrame(self)
+                self.add_new(tab_to_add)
+                self.insert(len(self.tabs())-1, self.new_tab, text="+")
+        except Exception: # _tkinter.TclError
+            pass
+
     def tab_ordering(self, event):
-        insertion_index = self.index(f"@{event.x},{event.y}")
-        self.insert(insertion_index, child=self.select())
+        try:
+            insertion_index = self.index(f"@{event.x},{event.y}")
+            self.insert(insertion_index, child=self.select())
+        except Exception: # _tkinter.TclError
+            pass
 
 
 class TabFrame(ttk.Frame):
