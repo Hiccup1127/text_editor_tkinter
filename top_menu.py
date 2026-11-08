@@ -13,21 +13,21 @@ class MainMenu(ttk.Menu):
         self.file_menu = ttk.Menu(self)
         self.add_cascade(label="File", menu=self.file_menu)
 
-        self.file_menu.add_command(label="New",
+        self.file_menu.add_command(label="New file...",
             command=lambda: container.notebook.add_new(app.TabFrame(container))
         )
         self.file_menu.add_separator()
-        self.file_menu.add_command(label="Open file",
-            command=lambda: self.open_file()
-        )
+        self.file_menu.add_command(label="Open file...", command=self.open_file)
+        self.file_menu.add_command(label="Open folder...", command=self.open_folder)
         self.file_menu.add_separator()
         self.file_menu.add_command(label="Save")
+        self.file_menu.add_command(label="Save As...")
     
     def open_file(self):
         path = f.get_file()
         file = open(path.name, "r")
 
-        file_name = (path.name.split("/")[-1]).split(".")[0]
+        file_name = path.name.split("/")[-1]
         
         
         self.container.tab = app.TabFrame(self.container)
@@ -39,3 +39,10 @@ class MainMenu(ttk.Menu):
             index=1.0, chars=file.read()
         )
         self.container.notebook.select(self.container.tab)
+    
+    def open_folder(self):
+        path = f.get_folder()
+
+        self.folder = path[0]
+        self.folder_data = path[1]
+        print(self.folder, self.folder_data)
