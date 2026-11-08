@@ -97,11 +97,11 @@ class Sidebar(ttk.Frame):
         self.main_container = ttk.Frame(self)
         self.main_container.pack(side="left", expand=1, fill="both")
 
-        self.title = ttk.Label(self.main_container, font="Calibri 16", text="Open folder")
+        self.title = ttk.Label(self.main_container, font="Calibri 16", text="Folder")
         self.title.pack(fill="x")
 
         self.content = ttk.Treeview(self.main_container)
-        self.content.pack(expand=0, fill="both")
+        self.content.pack(expand=1, fill="both")
 
 
         self.separator = ttk.Frame(self,
@@ -135,11 +135,6 @@ class Sidebar(ttk.Frame):
             return;
         else:
             self.config(width=self.width)    
-
-            print(event.x, self.width)
-
-            
-            
 
 
 def main():
