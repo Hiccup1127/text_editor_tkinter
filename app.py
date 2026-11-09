@@ -39,7 +39,7 @@ class Application(tk.Tk):
 
         self.tab1 = TabFrame(self)
         self.notebook.add_new(self.tab1, "new")
-
+        
 
         self.bind("q", lambda e: self.destroy())
 
@@ -67,8 +67,8 @@ class MainNotebook(ttk.Notebook):
         try:
             current_index = self.index(f"@{event.x},{event.y}")
             if current_index==self.index(self.new_tab):
-                tab_to_add = TabFrame(self.container)
-                self.container.notebook.add_new(tab_to_add)
+                tab = TabFrame(self.container)
+                self.add_new(tab)
         except Exception: # _tkinter.TclError
             pass
 
@@ -106,7 +106,7 @@ class TabFrame(ttk.Frame):
 
         self.text_frame.pack(expand=True, fill="both")
 
-
+        # self.__class__.__name__ = "__main__"
         self.__class__.instances.append(self)
         self.pack(expand=True, fill="both")
     
@@ -116,7 +116,6 @@ class TabFrame(ttk.Frame):
 
     @classmethod
     def change_tab_theme(cls, theme, theme_font):
-        print(cls.instances)
         for i in cls.instances:
             i.text_screen.config(
             background=theme,
