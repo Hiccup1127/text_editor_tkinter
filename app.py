@@ -3,6 +3,7 @@ import tkinter.ttk as ttk
 import ttkbootstrap as ttk
 import tkinter.scrolledtext as st
 import top_menu
+from notebook import *
 
 
 LIGHT = "#fcfbf9"
@@ -13,10 +14,6 @@ DARK = "black"
 DARK_FONT = "white"
 DARK_HOVER =    "#2f2156"
 DARK_SELECTED = "#161238"
-THEME = LIGHT
-THEME_FONT = LIGHT_FONT
-THEME_HOVER = LIGHT_HOVER
-THEME_SELECTED = LIGHT_SELECTED
 TEXT_FONT = ("Monospace", "12")
 
 
@@ -25,22 +22,7 @@ class Application(tk.Tk):
         super().__init__()
         self.title(title)
         self.geometry("800x600")
-
-        s = ttk.Style()
-        
-        s.layout("TNotebook", [])
-        s.configure("TNotebook", background=THEME, foreground=THEME_FONT)
-        s.configure("TNotebook", tabmargins=0)
-        s.configure("TNotebook.Tab", background=THEME, foreground=THEME_FONT)
-        s.map("TNotebook.Tab",
-            background=[("active", THEME_HOVER),
-                        ("selected", THEME_SELECTED)],
-            foreground=[("selected", THEME_FONT)]
-        )
-        s.configure("TLabel", background=THEME, foreground=THEME_FONT)
-        s.configure("TFrame", background=THEME)
-        s.configure("Treeview", background=THEME)
-        s.configure("separator1.TFrame", background=THEME_FONT)
+        __class__.set_theme(LIGHT, LIGHT_FONT, LIGHT_HOVER, LIGHT_SELECTED)
 
 
         self.sidebar = Sidebar(self)
@@ -52,74 +34,36 @@ class Application(tk.Tk):
         self.notebook.add_new(self.tab1, "new")
 
 
-        self.top_menu = top_menu.MainMenu(self, bg=THEME, fg=THEME_FONT)
+        self.top_menu = top_menu.MainMenu(self)
         self.config(menu=self.top_menu)
 
 
         self.bind("q", lambda e: self.destroy())
-
-
-class MainNotebook(ttk.Notebook):
-    def __init__(self, container):
-        super().__init__(container)
-        self.container = container
-
-        self.new_tab = TabFrame(self)
-        self.insert(len(self.tabs()), self.new_tab, text="+")
-
-        self.bind("<Button-1>", self.new_tab_click)
-        self.bind("<Button1-Motion>", self.tab_ordering)
-        self.pack(expand=True, fill="both")
     
-    def add_new(self, tab: TabFrame(), tabname: str="untitled", **kwargs):
-        self.add(tab, text=tabname, **kwargs)
-        self.insert(len(self.tabs())-1, self.new_tab, text="+")
-        self.select(len(self.tabs())-2)
-    
-    def new_tab_click(self, event):
-        try:
-            current_index = self.index(f"@{event.x},{event.y}")
-            if current_index==self.index(self.new_tab):
-                tab_to_add = TabFrame(self.container)
-                self.add_new(tab_to_add)
-                self.insert(len(self.tabs())-1, self.new_tab, text="+")
-        except Exception: # _tkinter.TclError
-            pass
-
-    def tab_ordering(self, event):
-        try:
-            insertion_index = self.index(f"@{event.x},{event.y}")
-            self.insert(insertion_index, child=self.select())
-        except Exception: # _tkinter.TclError
-            pass
-
-
-class TabFrame(ttk.Frame):
-    def __init__(self, container):
-        super().__init__(container)
-        # self.config(padding=1)
-
-
-        self.text_frame = ttk.Frame(self)
-
-        # self.text_screen = ttk.Text(self.text_frame)
-        self.text_screen = st.ScrolledText(
-            self.text_frame,
-            background=THEME, # make changes somewhere here
-            insertbackground=THEME_FONT,
-            foreground=THEME_FONT,
-            font=TEXT_FONT
-        )
-        # self.vs = ttk.Scrollbar(self.text_frame, command=self.text_screen.yview)
-        # self.text_screen.config(yscrollcommand=self.vs.set)
+    @staticmethod
+    def set_theme(theme, theme_font, theme_hover, theme_selected):
+        style = ttk.Style()
         
-        # self.vs.pack(fill="y", side="right")
-        self.text_screen.pack(expand=True, fill="both", side="right")
+        style.layout("TNotebook", [])
+        style.configure("TNotebook", background=theme, foreground=theme_font)
+        style.configure("TNotebook", tabmargins=0)
+        style.configure("TNotebook.Tab", background=theme, foreground=theme_font)
+        style.map("TNotebook.Tab",
+            background=[("active", theme_hover),
+                        ("selected", theme_selected)],
+            foreground=[("selected", theme_font)]
+        )
+        style.configure("TLabel", background=theme, foreground=theme_font)
+        style.configure("TFrame", background=theme)
+        style.configure("Treeview", background=theme)
+        style.configure("separator1.TFrame", background=theme_font)
 
-        self.text_frame.pack(expand=True, fill="both")
-
-
-        self.pack(expand=True, fill="both")
+        for tab in TabFrame.get_instances():
+            tab.text_screen.config(
+                background=theme,
+                insertbackground=theme_font,
+                foreground=theme_font,
+            )
 
 
 class Sidebar(ttk.Frame):

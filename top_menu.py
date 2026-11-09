@@ -1,6 +1,7 @@
 import tkinter as tk
 import ttkbootstrap as ttk
 from app import *
+from notebook import *
 import filedialogs as f
 
 
@@ -9,13 +10,11 @@ class MainMenu(ttk.Menu):
         super().__init__(container, **kwargs)
         self.container = container
 
-        self.file_menu = tk.Menu(self, bg=THEME, fg=THEME_FONT)
+        self.file_menu = tk.Menu(self, bg=LIGHT, fg=LIGHT_FONT)
         self.add_cascade(label="File", menu=self.file_menu)
 
-        def new_file():
-            tab = TabFrame(container)
-            container.notebook.add_new(tab)
-        self.file_menu.add_command(label="New file...", command=new_file)
+        self.file_menu.add_command(label="New file...",
+        command=lambda: self.container.notebook.add_new(TabFrame(self.container)))
         self.file_menu.add_separator()
         self.file_menu.add_command(label="Open file...", command=self.open_file)
         self.file_menu.add_command(label="Open folder...", command=self.open_folder)
@@ -24,7 +23,7 @@ class MainMenu(ttk.Menu):
         self.file_menu.add_command(label="Save As...")
         self.file_menu.add_command(label="Close file")
 
-        self.edit_menu = tk.Menu(self, bg=THEME, fg=THEME_FONT)
+        self.edit_menu = tk.Menu(self, bg=LIGHT, fg=LIGHT_FONT)
         self.add_cascade(label="Edit", menu=self.edit_menu)
 
         self.edit_menu.add_command(label="Undo")
@@ -34,11 +33,13 @@ class MainMenu(ttk.Menu):
         self.edit_menu.add_command(label="Copy")
         self.edit_menu.add_command(label="Paste")
 
-        self.theme_menu = tk.Menu(self, bg=THEME, fg=THEME_FONT)
+        self.theme_menu = tk.Menu(self, bg=LIGHT, fg=LIGHT_FONT)
         self.add_cascade(label="Theme", menu=self.theme_menu)
 
-        self.theme_menu.add_command(label="Light", command=self.light_theme)
-        self.theme_menu.add_command(label="Dark", command=self.dark_theme)
+        self.theme_menu.add_command(label="Light",
+        command=Application.set_theme(LIGHT, LIGHT_FONT, LIGHT_HOVER, LIGHT_SELECTED))
+        self.theme_menu.add_command(label="Dark",
+        command=Application.set_theme(DARK, DARK_FONT, DARK_HOVER, DARK_SELECTED))
         self.theme_menu.add_separator()
         self.theme_menu.add_command(label="Settings")
     
@@ -86,7 +87,6 @@ class MainMenu(ttk.Menu):
         s.configure("TFrame", background=THEME)
         s.configure("Treeview", background=THEME)
         s.configure("separator1.TFrame", background=THEME_FONT)
-        TabFrame.theme = THEME
 
     def open_file(self):
         path = f.get_file()
