@@ -24,9 +24,12 @@ class MainMenu(ttk.Menu):
         self.file_menu.add_command(label="Save", command=self.save_file)
         self.file_menu.add_command(label="Save As...", command=self.save_file)
         def close_tab_menu():
-            tab = self.container.notebook.select()
-            tab_id = self.container.notebook.index(tab)
-            self.container.notebook.close_tab(tab_id)
+            try:
+                tab = self.container.notebook.select()
+                tab_id = self.container.notebook.index(tab)
+                self.container.notebook.close_tab(tab_id)
+            except Exception: # _tkinter.TclError
+                pass
         self.file_menu.add_command(label="Close", command=close_tab_menu)
 
         self.edit_menu = tk.Menu(self, bg=LIGHT, fg=LIGHT_FONT)

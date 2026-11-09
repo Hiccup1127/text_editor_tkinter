@@ -10,17 +10,17 @@ class MainNotebook(ttk.Notebook):
         super().__init__(container)
         self.container = container
 
-        self.new_tab = TabFrame(self)
-        self.insert(len(self.tabs()), self.new_tab, text="+")
+        # self.new_tab = TabFrame(self)
+        # self.insert(len(self.tabs()), self.new_tab, text="+")
 
-        self.bind("<Button-1>", self.new_tab_click)
+        # self.bind("<Button-1>", self.new_tab_click)
         self.bind("<Button1-Motion>", self.tab_ordering)
         self.pack(expand=True, fill="both")
     
     def add_new(self, tab: TabFrame(self.container), tabname: str="untitled", **kwargs):
         self.add(tab, text=tabname, **kwargs)
-        self.insert(len(self.tabs())-1, self.new_tab, text="+")
-        self.select(len(self.tabs())-2)
+        # self.insert(len(self.tabs())-1, self.new_tab, text="+")
+        self.select(len(self.tabs())-1) # self.select(len(self.tabs())-2)
         if self.container.selected_theme=="dark":
             TabFrame.change_tab_theme(app.DARK, app.DARK_FONT)
     
