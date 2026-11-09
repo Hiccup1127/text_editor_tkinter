@@ -1,6 +1,7 @@
 import tkinter as tk
 import ttkbootstrap as ttk
 from app import *
+from notebook import *
 import filedialogs as f
 
 
@@ -9,13 +10,11 @@ class MainMenu(ttk.Menu):
         super().__init__(container, **kwargs)
         self.container = container
 
-        self.file_menu = tk.Menu(self, bg=THEME, fg=THEME_FONT)
+        self.file_menu = tk.Menu(self, bg=LIGHT, fg=LIGHT_FONT)
         self.add_cascade(label="File", menu=self.file_menu)
 
-        def new_file():
-            tab = TabFrame(container)
-            container.notebook.add_new(tab)
-        self.file_menu.add_command(label="New file...", command=new_file)
+        self.file_menu.add_command(label="New file...",
+        command=lambda: self.container.notebook.add_new(TabFrame(self.container)))
         self.file_menu.add_separator()
         self.file_menu.add_command(label="Open file...", command=self.open_file)
         self.file_menu.add_command(label="Open folder...", command=self.open_folder)
@@ -24,7 +23,7 @@ class MainMenu(ttk.Menu):
         self.file_menu.add_command(label="Save As...")
         self.file_menu.add_command(label="Close file")
 
-        self.edit_menu = tk.Menu(self, bg=THEME, fg=THEME_FONT)
+        self.edit_menu = tk.Menu(self, bg=LIGHT, fg=LIGHT_FONT)
         self.add_cascade(label="Edit", menu=self.edit_menu)
 
         self.edit_menu.add_command(label="Undo")
@@ -89,7 +88,7 @@ class MainMenu(ttk.Menu):
 
         TabFrame.change_tab_theme(LIGHT, LIGHT_FONT)
 
-        self.container.selected_theme == "light"
+        self.container.selected_theme = "light"
     
     def dark_theme(self):
         THEME = DARK
@@ -114,7 +113,8 @@ class MainMenu(ttk.Menu):
 
         TabFrame.change_tab_theme(DARK, DARK_FONT)
 
-        self.container.selected_theme == "dark"
+        self.container.selected_theme = "dark"
+
 
     def open_file(self):
         path = f.get_file()
