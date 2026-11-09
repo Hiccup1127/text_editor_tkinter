@@ -22,7 +22,6 @@ class Application(tk.Tk):
         super().__init__()
         self.title(title)
         self.geometry("800x600")
-        __class__.set_theme(LIGHT, LIGHT_FONT, LIGHT_HOVER, LIGHT_SELECTED)
 
 
         self.sidebar = Sidebar(self)
@@ -36,34 +35,10 @@ class Application(tk.Tk):
 
         self.top_menu = top_menu.MainMenu(self)
         self.config(menu=self.top_menu)
+        self.top_menu.light_theme()
 
 
         self.bind("q", lambda e: self.destroy())
-    
-    @staticmethod
-    def set_theme(theme, theme_font, theme_hover, theme_selected):
-        style = ttk.Style()
-        
-        style.layout("TNotebook", [])
-        style.configure("TNotebook", background=theme, foreground=theme_font)
-        style.configure("TNotebook", tabmargins=0)
-        style.configure("TNotebook.Tab", background=theme, foreground=theme_font)
-        style.map("TNotebook.Tab",
-            background=[("active", theme_hover),
-                        ("selected", theme_selected)],
-            foreground=[("selected", theme_font)]
-        )
-        style.configure("TLabel", background=theme, foreground=theme_font)
-        style.configure("TFrame", background=theme)
-        style.configure("Treeview", background=theme)
-        style.configure("separator1.TFrame", background=theme_font)
-
-        for tab in TabFrame.get_instances():
-            tab.text_screen.config(
-                background=theme,
-                insertbackground=theme_font,
-                foreground=theme_font,
-            )
 
 
 class Sidebar(ttk.Frame):

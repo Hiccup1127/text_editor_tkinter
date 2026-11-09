@@ -51,9 +51,9 @@ class TabFrame(ttk.Frame):
 
         # self.text_screen = ttk.Text(self.text_frame)
         self.text_screen = st.ScrolledText(self.text_frame,
-            # background=app.LIGHT,
-            # insertbackground=app.LIGHT_FONT,
-            # foreground=app.LIGHT_FONT,
+            background=app.LIGHT,
+            insertbackground=app.LIGHT_FONT,
+            foreground=app.LIGHT_FONT,
             font=app.TEXT_FONT
         )
         # self.vs = ttk.Scrollbar(self.text_frame, command=self.text_screen.yview)
@@ -71,6 +71,15 @@ class TabFrame(ttk.Frame):
     @classmethod
     def get_instances(cls):
         return cls.instances
+    
+    @classmethod
+    def change_tab_theme(cls, theme, theme_font):
+        for i in cls.instances:
+            i.text_screen.config(
+            background=theme,
+            insertbackground=theme_font,
+            foreground=theme_font,
+        )
     
     # def __str__(self)->str:
     #     for i in range(len(self.__class__.instances)):
