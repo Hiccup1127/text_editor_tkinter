@@ -95,6 +95,8 @@ class MainNotebook(ttk.Notebook):
 
 
 class TabFrame(ttk.Frame):
+    instances = []
+
     def __init__(self, container):
         super().__init__(container)
         # self.config(padding=1)
@@ -120,6 +122,15 @@ class TabFrame(ttk.Frame):
 
 
         self.pack(expand=True, fill="both")
+    
+    @classmethod
+    def change_tab_theme(cls, theme, theme_font):
+        for i in cls.instances:
+            i.text_screen.config(
+            background=theme,
+            insertbackground=theme_font,
+            foreground=theme_font,
+        )
 
 
 class Sidebar(ttk.Frame):
