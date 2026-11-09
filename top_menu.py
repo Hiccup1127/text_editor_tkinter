@@ -41,30 +41,6 @@ class MainMenu(ttk.Menu):
         self.theme_menu.add_separator()
         self.theme_menu.add_command(label="Settings")
 
-    # def set_theme(self, theme, theme_font, theme_hover, theme_selected):
-    #     style = ttk.Style()
-        
-    #     style.layout("TNotebook", [])
-    #     style.configure("TNotebook", background=theme, foreground=theme_font)
-    #     style.configure("TNotebook", tabmargins=0)
-    #     style.configure("TNotebook.Tab", background=theme, foreground=theme_font)
-    #     style.map("TNotebook.Tab",
-    #         background=[("active", theme_hover),
-    #                     ("selected", theme_selected)],
-    #         foreground=[("selected", theme_font)]
-    #     )
-    #     style.configure("TLabel", background=theme, foreground=theme_font)
-    #     style.configure("TFrame", background=theme)
-    #     style.configure("Treeview", background=theme)
-    #     style.configure("separator1.TFrame", background=theme_font)
-
-    #     for tab in TabFrame.get_instances():
-    #         tab.text_screen.config(
-    #             background=theme,
-    #             insertbackground=theme_font,
-    #             foreground=theme_font,
-    #         )
-
     def light_theme(self):
         THEME = LIGHT
         THEME_FONT = LIGHT_FONT
@@ -114,7 +90,6 @@ class MainMenu(ttk.Menu):
         TabFrame.change_tab_theme(DARK, DARK_FONT)
 
         self.container.selected_theme = "dark"
-
 
     def open_file(self):
         path = f.get_file()

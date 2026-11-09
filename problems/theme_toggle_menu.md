@@ -1,8 +1,90 @@
-* The actual problem here:
+### The actual problem here:
 
-__name__ attribute of the class' instances.
 
-this is the code of the app.py
+__name__ attribute of the class' instances from different modules
+was different.
+
+That caused the issue in the theme toggle menu implementation.
+
+The solution in the actual code was separating the code that initializes
+the main tab frame and it's notebook widget into a singe file.
+
+
+When I initialise a TabFrame from app.py which is a main script in the project,
+the object of it is saved with __main__ attribute of its module name(__name__),
+it looks like this: 
+
+`<__main__.TabFrame object ...>`
+
+It produces inisde the new_tab_click() method of my MainNotebook class
+
+(it's my implementation of the "+" button that adds a new tab in right
+of all the existing tabs, regular mechanism of the most lightweight
+modern text editors)
+
+```
+
+class MainNotebook(ttk.Notebook):
+    def __init__(self, container):
+        super().__init__(container)
+        self.container = container
+
+        # ...
+    
+    def add_new(self, tab: TabFrame(), tabname: str="untitled", **kwargs):
+        self.add(tab, text=tabname, **kwargs)
+        # ...
+    
+    def new_tab_click(self, event):
+        try:
+            current_index = self.index(f"@{event.x},{event.y}")
+            if current_index==self.index(self.new_tab):
+                tab = TabFrame(self.container)  # <--- this line
+                self.add_new(tab)
+        except Exception: # _tkinter.TclError
+            pass
+
+```
+
+When I do the same but the initialization of the object comes in top_menu.py,
+its __name__ attribute sets to 'app' by default(which is the name of
+the app.py module).
+
+`<app.TabFrame object>`
+
+It's producing here
+
+```
+
+class MainMenu(ttk.Menu):
+    def __init__(self, container, **kwargs):
+        super().__init__(container, **kwargs)
+        self.container = container
+
+        self.file_menu = tk.Menu(self, bg=THEME, fg=THEME_FONT)
+        self.add_cascade(label="File", menu=self.file_menu)
+
+        def new_file():
+            tab = TabFrame(container) # <--- this line.
+            container.notebook.add_new(tab)
+        self.file_menu.add_command(label="New file...", command=new_file)
+        # ...
+
+```
+
+When I placed all the TabFrame and Notebook code into single separated file
+the initialization process started assigning the name of the module
+(notebook.py) to the __name__ attribute for all the instances of the
+TabFrame class regardless of the place in the code where it's called.
+
+And considering this, iteration through all the instances has become
+much easier.
+
+
+
+
+
+this is the full code of the app.py
 
 ```
 
@@ -193,7 +275,7 @@ if __name__=="__main__":
 ```
 
 
-this is the code of the top_menu.py
+this is the full code of the top_menu.py
 
 ```
 

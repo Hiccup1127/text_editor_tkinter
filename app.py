@@ -7,11 +7,11 @@ from notebook import *
 
 
 LIGHT = "#fcfbf9"
-LIGHT_FONT = "#000000"
+LIGHT_FONT = "#000"
 LIGHT_HOVER =    "#f2d0b5"
 LIGHT_SELECTED = "#fcb276"
-DARK = "black"
-DARK_FONT = "white"
+DARK = "#131116"
+DARK_FONT = "#fff"
 DARK_HOVER =    "#2f2156"
 DARK_SELECTED = "#161238"
 TEXT_FONT = ("Monospace", "12")
@@ -24,10 +24,10 @@ class Application(tk.Tk):
         self.geometry("800x600")
 
 
+        self.selected_theme = "light"
         self.top_menu = top_menu.MainMenu(self)
         self.config(menu=self.top_menu)
         self.top_menu.light_theme()
-        self.selected_theme = "light"
 
 
         self.sidebar = Sidebar(self)
