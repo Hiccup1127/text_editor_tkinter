@@ -34,16 +34,37 @@ class MainMenu(ttk.Menu):
         self.edit_menu.add_command(label="Copy")
         self.edit_menu.add_command(label="Paste")
 
-        self.theme_menu = tk.Menu(self, bg=THEME, fg=THEME_FONT)
+        self.theme_menu = tk.Menu(self, bg=LIGHT, fg=LIGHT_FONT)
         self.add_cascade(label="Theme", menu=self.theme_menu)
 
-        self.theme_menu.add_command(label="Light", command=self.light_theme)
+        self.theme_menu.add_command(label="Light",command=self.light_theme)
         self.theme_menu.add_command(label="Dark", command=self.dark_theme)
         self.theme_menu.add_separator()
         self.theme_menu.add_command(label="Settings")
-    
-    # get rid of two functions and make 1:
-    # complete theme toggle
+
+    # def set_theme(self, theme, theme_font, theme_hover, theme_selected):
+    #     style = ttk.Style()
+        
+    #     style.layout("TNotebook", [])
+    #     style.configure("TNotebook", background=theme, foreground=theme_font)
+    #     style.configure("TNotebook", tabmargins=0)
+    #     style.configure("TNotebook.Tab", background=theme, foreground=theme_font)
+    #     style.map("TNotebook.Tab",
+    #         background=[("active", theme_hover),
+    #                     ("selected", theme_selected)],
+    #         foreground=[("selected", theme_font)]
+    #     )
+    #     style.configure("TLabel", background=theme, foreground=theme_font)
+    #     style.configure("TFrame", background=theme)
+    #     style.configure("Treeview", background=theme)
+    #     style.configure("separator1.TFrame", background=theme_font)
+
+    #     for tab in TabFrame.get_instances():
+    #         tab.text_screen.config(
+    #             background=theme,
+    #             insertbackground=theme_font,
+    #             foreground=theme_font,
+    #         )
 
     def light_theme(self):
         THEME = LIGHT
@@ -65,6 +86,8 @@ class MainMenu(ttk.Menu):
         s.configure("TFrame", background=THEME)
         s.configure("Treeview", background=THEME)
         s.configure("separator1.TFrame", background=THEME_FONT)
+
+        TabFrame.change_tab_theme(LIGHT, LIGHT_FONT)
     
     def dark_theme(self):
         THEME = DARK
@@ -86,7 +109,8 @@ class MainMenu(ttk.Menu):
         s.configure("TFrame", background=THEME)
         s.configure("Treeview", background=THEME)
         s.configure("separator1.TFrame", background=THEME_FONT)
-        TabFrame.theme = THEME
+
+        TabFrame.change_tab_theme(DARK, DARK_FONT)
 
     def open_file(self):
         path = f.get_file()

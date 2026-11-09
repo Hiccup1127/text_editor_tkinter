@@ -26,22 +26,6 @@ class Application(tk.Tk):
         self.title(title)
         self.geometry("800x600")
 
-        s = ttk.Style()
-        
-        s.layout("TNotebook", [])
-        s.configure("TNotebook", background=THEME, foreground=THEME_FONT)
-        s.configure("TNotebook", tabmargins=0)
-        s.configure("TNotebook.Tab", background=THEME, foreground=THEME_FONT)
-        s.map("TNotebook.Tab",
-            background=[("active", THEME_HOVER),
-                        ("selected", THEME_SELECTED)],
-            foreground=[("selected", THEME_FONT)]
-        )
-        s.configure("TLabel", background=THEME, foreground=THEME_FONT)
-        s.configure("TFrame", background=THEME)
-        s.configure("Treeview", background=THEME)
-        s.configure("separator1.TFrame", background=THEME_FONT)
-
 
         self.sidebar = Sidebar(self)
 
@@ -54,6 +38,7 @@ class Application(tk.Tk):
 
         self.top_menu = top_menu.MainMenu(self, bg=THEME, fg=THEME_FONT)
         self.config(menu=self.top_menu)
+        self.top_menu.light_theme()
 
 
         self.bind("q", lambda e: self.destroy())
@@ -122,7 +107,12 @@ class TabFrame(ttk.Frame):
 
 
         self.pack(expand=True, fill="both")
+        self.__class__.instances.append(self)
     
+    @classmethod
+    def get_instances(cls):
+        return cls.instances
+
     @classmethod
     def change_tab_theme(cls, theme, theme_font):
         for i in cls.instances:
