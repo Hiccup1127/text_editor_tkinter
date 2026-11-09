@@ -12,7 +12,7 @@ def get_file():
         filetypes=(
             ("Text file", "*.txt"),
             ("Python code", "*.py"),
-            ("All files", "*.*")
+            ("All files", ["*.*",])
         )
     )
     return file
@@ -30,9 +30,10 @@ def get_folder():
     data = listdir(folder)
 
     f = []
-    for dirpath, dirnames, filenames in walk(folder):
-        row = (dirpath, dirnames, filenames)
-        f.extend(row)
+    for dd, ddn, fn in walk(folder):
+        f.append(dd)
+        f.append(ddn)
+        f.append(fn)
     
     print(f)
 

@@ -5,11 +5,42 @@ import tkinter.scrolledtext as st
 import top_menu
 
 
+LIGHT = "#fcfbf9"
+LIGHT_FONT = "#000000"
+LIGHT_HOVER =    "#f2d0b5"
+LIGHT_SELECTED = "#fcb276"
+DARK = "black"
+DARK_FONT = "white"
+DARK_HOVER =    "#2f2156"
+DARK_SELECTED = "#161238"
+THEME = LIGHT
+THEME_FONT = LIGHT_FONT
+THEME_HOVER = LIGHT_HOVER
+THEME_SELECTED = LIGHT_SELECTED
+TEXT_FONT = ("Monospace", "12")
+
+
 class Application(tk.Tk):
     def __init__(self, title="Text editor"):
         super().__init__()
         self.title(title)
         self.geometry("800x600")
+
+        s = ttk.Style()
+        
+        s.layout("TNotebook", [])
+        s.configure("TNotebook", background=THEME, foreground=THEME_FONT)
+        s.configure("TNotebook", tabmargins=0)
+        s.configure("TNotebook.Tab", background=THEME, foreground=THEME_FONT)
+        s.map("TNotebook.Tab",
+            background=[("active", THEME_HOVER),
+                        ("selected", THEME_SELECTED)],
+            foreground=[("selected", THEME_FONT)]
+        )
+        s.configure("TLabel", background=THEME, foreground=THEME_FONT)
+        s.configure("TFrame", background=THEME)
+        s.configure("Treeview", background=THEME)
+        s.configure("separator1.TFrame", background=THEME_FONT)
 
 
         self.sidebar = Sidebar(self)
@@ -21,7 +52,7 @@ class Application(tk.Tk):
         self.notebook.add_new(self.tab1, "new")
 
 
-        self.top_menu = top_menu.MainMenu(self)
+        self.top_menu = top_menu.MainMenu(self, bg=THEME, fg=THEME_FONT)
         self.config(menu=self.top_menu)
 
 
@@ -31,6 +62,7 @@ class Application(tk.Tk):
 class MainNotebook(ttk.Notebook):
     def __init__(self, container):
         super().__init__(container)
+        self.container = container
 
         self.new_tab = TabFrame(self)
         self.insert(len(self.tabs()), self.new_tab, text="+")
@@ -39,15 +71,16 @@ class MainNotebook(ttk.Notebook):
         self.bind("<Button1-Motion>", self.tab_ordering)
         self.pack(expand=True, fill="both")
     
-    def add_new(self, tab: TabFrame(), tabname: str="untitled"):
-        self.add(tab, text=tabname)
+    def add_new(self, tab: TabFrame(), tabname: str="untitled", **kwargs):
+        self.add(tab, text=tabname, **kwargs)
         self.insert(len(self.tabs())-1, self.new_tab, text="+")
+        self.select(len(self.tabs())-2)
     
     def new_tab_click(self, event):
         try:
             current_index = self.index(f"@{event.x},{event.y}")
             if current_index==self.index(self.new_tab):
-                tab_to_add = TabFrame(self)
+                tab_to_add = TabFrame(self.container)
                 self.add_new(tab_to_add)
                 self.insert(len(self.tabs())-1, self.new_tab, text="+")
         except Exception: # _tkinter.TclError
@@ -64,17 +97,19 @@ class MainNotebook(ttk.Notebook):
 class TabFrame(ttk.Frame):
     def __init__(self, container):
         super().__init__(container)
-        self.s = ttk.Style()
-        self.s.layout("TNotebook", [])
-        self.s.configure("TNotebook", tabmargins=0)
-        self.s.configure("TFrame", background="lightgray")
         # self.config(padding=1)
 
 
         self.text_frame = ttk.Frame(self)
 
         # self.text_screen = ttk.Text(self.text_frame)
-        self.text_screen = st.ScrolledText(self.text_frame)
+        self.text_screen = st.ScrolledText(
+            self.text_frame,
+            background=THEME, # make changes somewhere here
+            insertbackground=THEME_FONT,
+            foreground=THEME_FONT,
+            font=TEXT_FONT
+        )
         # self.vs = ttk.Scrollbar(self.text_frame, command=self.text_screen.yview)
         # self.text_screen.config(yscrollcommand=self.vs.set)
         
@@ -90,14 +125,12 @@ class TabFrame(ttk.Frame):
 class Sidebar(ttk.Frame):
     def __init__(self, container):
         super().__init__(container)
-        self.style = ttk.Style()
-        self.style.configure("separator1.TFrame", background="green")
 
 
         self.main_container = ttk.Frame(self)
         self.main_container.pack(side="left", expand=1, fill="both")
 
-        self.title = ttk.Label(self.main_container, font="Calibri 16", text="Folder")
+        self.title = ttk.Label(self.main_container, font="Calibri 16", text="Content")
         self.title.pack(fill="x")
 
         self.content = ttk.Treeview(self.main_container)
