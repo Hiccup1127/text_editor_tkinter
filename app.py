@@ -3,6 +3,18 @@ import tkinter.ttk as ttk
 import ttkbootstrap as ttk
 import tkinter.scrolledtext as st
 import top_menu
+from notebook import *
+
+
+LIGHT = "#fcfbf9"
+LIGHT_FONT = "#000"
+LIGHT_HOVER =    "#f2d0b5"
+LIGHT_SELECTED = "#fcb276"
+DARK = "#131116"
+DARK_FONT = "#fff"
+DARK_HOVER =    "#2f2156"
+DARK_SELECTED = "#161238"
+TEXT_FONT = ("Monospace", "12")
 
 
 class Application(tk.Tk):
@@ -10,6 +22,12 @@ class Application(tk.Tk):
         super().__init__()
         self.title(title)
         self.geometry("800x600")
+
+
+        self.selected_theme = "light"
+        self.top_menu = top_menu.MainMenu(self)
+        self.config(menu=self.top_menu)
+        self.top_menu.light_theme()
 
 
         self.sidebar = Sidebar(self)
@@ -21,83 +39,18 @@ class Application(tk.Tk):
         self.notebook.add_new(self.tab1, "new")
 
 
-        self.top_menu = top_menu.MainMenu(self)
-        self.config(menu=self.top_menu)
-
-
         self.bind("q", lambda e: self.destroy())
-
-
-class MainNotebook(ttk.Notebook):
-    def __init__(self, container):
-        super().__init__(container)
-
-        self.new_tab = TabFrame(self)
-        self.insert(len(self.tabs()), self.new_tab, text="+")
-
-        self.bind("<Button-1>", self.new_tab_click)
-        self.bind("<Button1-Motion>", self.tab_ordering)
-        self.pack(expand=True, fill="both")
-    
-    def add_new(self, tab: TabFrame(), tabname: str="untitled"):
-        self.add(tab, text=tabname)
-        self.insert(len(self.tabs())-1, self.new_tab, text="+")
-    
-    def new_tab_click(self, event):
-        try:
-            current_index = self.index(f"@{event.x},{event.y}")
-            if current_index==self.index(self.new_tab):
-                tab_to_add = TabFrame(self)
-                self.add_new(tab_to_add)
-                self.insert(len(self.tabs())-1, self.new_tab, text="+")
-        except Exception: # _tkinter.TclError
-            pass
-
-    def tab_ordering(self, event):
-        try:
-            insertion_index = self.index(f"@{event.x},{event.y}")
-            self.insert(insertion_index, child=self.select())
-        except Exception: # _tkinter.TclError
-            pass
-
-
-class TabFrame(ttk.Frame):
-    def __init__(self, container):
-        super().__init__(container)
-        self.s = ttk.Style()
-        self.s.layout("TNotebook", [])
-        self.s.configure("TNotebook", tabmargins=0)
-        self.s.configure("TFrame", background="lightgray")
-        # self.config(padding=1)
-
-
-        self.text_frame = ttk.Frame(self)
-
-        # self.text_screen = ttk.Text(self.text_frame)
-        self.text_screen = st.ScrolledText(self.text_frame)
-        # self.vs = ttk.Scrollbar(self.text_frame, command=self.text_screen.yview)
-        # self.text_screen.config(yscrollcommand=self.vs.set)
-        
-        # self.vs.pack(fill="y", side="right")
-        self.text_screen.pack(expand=True, fill="both", side="right")
-
-        self.text_frame.pack(expand=True, fill="both")
-
-
-        self.pack(expand=True, fill="both")
 
 
 class Sidebar(ttk.Frame):
     def __init__(self, container):
         super().__init__(container)
-        self.style = ttk.Style()
-        self.style.configure("separator1.TFrame", background="green")
 
 
         self.main_container = ttk.Frame(self)
         self.main_container.pack(side="left", expand=1, fill="both")
 
-        self.title = ttk.Label(self.main_container, font="Calibri 16", text="Folder")
+        self.title = ttk.Label(self.main_container, font="Calibri 16", text="Content")
         self.title.pack(fill="x")
 
         self.content = ttk.Treeview(self.main_container)
