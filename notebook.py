@@ -28,8 +28,8 @@ class MainNotebook(ttk.Notebook):
         try:
             current_index = self.index(f"@{event.x},{event.y}")
             if current_index==self.index(self.new_tab):
-                tab = TabFrame(self.container)
-                self.container.notebook.add_new(tab)
+                tab = TabFrame(self)
+                self.add_new(tab)
         except Exception: # _tkinter.TclError
             pass
 
@@ -39,6 +39,9 @@ class MainNotebook(ttk.Notebook):
             self.insert(insertion_index, child=self.select())
         except Exception: # _tkinter.TclError
             pass
+    
+    def close_tab(self, index: int):
+        self.forget(index)
 
 
 class TabFrame(ttk.Frame):
@@ -71,9 +74,15 @@ class TabFrame(ttk.Frame):
         self.__class__.instances.append(self)
     
     @classmethod
-    def get_instances(cls):
+    def get_all_instances(cls):
         return cls.instances
     
+    @classmethod
+    def get_instance(cls, name: str):
+        for i in cls.instances:
+            if i==name:
+                return i
+
     @classmethod
     def change_tab_theme(cls, theme, theme_font):
         for i in cls.instances:

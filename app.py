@@ -35,7 +35,7 @@ class Application(tk.Tk):
 
         self.notebook = MainNotebook(self)
 
-        self.tab1 = TabFrame(self)
+        self.tab1 = TabFrame(self.notebook)
         self.notebook.add_new(self.tab1, "new")
 
 

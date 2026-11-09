@@ -13,15 +13,21 @@ class MainMenu(ttk.Menu):
         self.file_menu = tk.Menu(self, bg=LIGHT, fg=LIGHT_FONT)
         self.add_cascade(label="File", menu=self.file_menu)
 
-        self.file_menu.add_command(label="New file...",
-        command=lambda: self.container.notebook.add_new(TabFrame(self.container)))
+        def new_tab():
+            tab = TabFrame(self.container.notebook)
+            self.container.notebook.add_new(tab)
+        self.file_menu.add_command(label="New file...", command=new_tab)
         self.file_menu.add_separator()
         self.file_menu.add_command(label="Open file...", command=self.open_file)
         self.file_menu.add_command(label="Open folder...", command=self.open_folder)
         self.file_menu.add_separator()
-        self.file_menu.add_command(label="Save")
-        self.file_menu.add_command(label="Save As...")
-        self.file_menu.add_command(label="Close file")
+        self.file_menu.add_command(label="Save", command=self.save_file)
+        self.file_menu.add_command(label="Save As...", command=self.save_file)
+        def close_tab_menu():
+            tab = self.container.notebook.select()
+            tab_id = self.container.notebook.index(tab)
+            self.container.notebook.close_tab(tab_id)
+        self.file_menu.add_command(label="Close", command=close_tab_menu)
 
         self.edit_menu = tk.Menu(self, bg=LIGHT, fg=LIGHT_FONT)
         self.add_cascade(label="Edit", menu=self.edit_menu)
@@ -114,3 +120,10 @@ class MainMenu(ttk.Menu):
         self.folder = path[0]
         self.folder_data = path[1]
         # print(self.folder, self.folder_data)
+    
+    def save_file(self):
+        
+        # print(tab_id)
+        print(type(TabFrame.get_all_instances()[0]))
+        # print(dir(TabFrame.get_all_instances()[0]))
+        # filedialogs.save_file_path(text)

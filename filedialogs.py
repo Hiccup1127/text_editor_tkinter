@@ -18,14 +18,25 @@ def get_file():
     return file
 
 
-def save_file():
-    pass
-
+def save_file_path(text: str):
+    file_save = filedialog.asksaveasfile(
+        defaultextension=".txt",
+        filetypes = (
+            ("Text file", ".txt"),
+            ("Python code", ".py"),
+            ("All files", ".*")
+        ),
+        # initialdir="C:\\Users\\"
+    )
+    if file_save is None:
+        return;
+    file_save.write(text)
+    file_save.close()
 
 def get_folder():
     folder = filedialog.askdirectory(
         title="Open a folder ...",
-        initialdir = "C:\\Users\\catchy_cat14"
+        initialdir = "C:\\Users\\"
     )
     data = listdir(folder)
 
