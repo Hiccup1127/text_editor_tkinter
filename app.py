@@ -27,6 +27,11 @@ class Application(tk.Tk):
         self.geometry("800x600")
 
 
+        self.selected_theme = "light"
+        self.top_menu = top_menu.MainMenu(self)
+        self.config(menu=self.top_menu)
+        self.top_menu.light_theme()
+
         self.sidebar = Sidebar(self)
 
 
@@ -34,11 +39,6 @@ class Application(tk.Tk):
 
         self.tab1 = TabFrame(self)
         self.notebook.add_new(self.tab1, "new")
-
-
-        self.top_menu = top_menu.MainMenu(self, bg=THEME, fg=THEME_FONT)
-        self.config(menu=self.top_menu)
-        self.top_menu.light_theme()
 
 
         self.bind("q", lambda e: self.destroy())
@@ -60,14 +60,15 @@ class MainNotebook(ttk.Notebook):
         self.add(tab, text=tabname, **kwargs)
         self.insert(len(self.tabs())-1, self.new_tab, text="+")
         self.select(len(self.tabs())-2)
+        if self.container.selected_theme=="dark":
+            TabFrame.change_tab_theme(DARK, DARK_FONT)
     
     def new_tab_click(self, event):
         try:
             current_index = self.index(f"@{event.x},{event.y}")
             if current_index==self.index(self.new_tab):
                 tab_to_add = TabFrame(self.container)
-                self.add_new(tab_to_add)
-                self.insert(len(self.tabs())-1, self.new_tab, text="+")
+                self.container.notebook.add_new(tab_to_add)
         except Exception: # _tkinter.TclError
             pass
 
@@ -106,8 +107,8 @@ class TabFrame(ttk.Frame):
         self.text_frame.pack(expand=True, fill="both")
 
 
-        self.pack(expand=True, fill="both")
         self.__class__.instances.append(self)
+        self.pack(expand=True, fill="both")
     
     @classmethod
     def get_instances(cls):
@@ -115,6 +116,7 @@ class TabFrame(ttk.Frame):
 
     @classmethod
     def change_tab_theme(cls, theme, theme_font):
+        print(cls.instances)
         for i in cls.instances:
             i.text_screen.config(
             background=theme,
