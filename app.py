@@ -24,6 +24,12 @@ class Application(tk.Tk):
         self.geometry("800x600")
 
 
+        self.top_menu = top_menu.MainMenu(self)
+        self.config(menu=self.top_menu)
+        self.top_menu.light_theme()
+        self.selected_theme = "light"
+
+
         self.sidebar = Sidebar(self)
 
 
@@ -31,11 +37,6 @@ class Application(tk.Tk):
 
         self.tab1 = TabFrame(self)
         self.notebook.add_new(self.tab1, "new")
-
-
-        self.top_menu = top_menu.MainMenu(self)
-        self.config(menu=self.top_menu)
-        self.top_menu.light_theme()
 
 
         self.bind("q", lambda e: self.destroy())

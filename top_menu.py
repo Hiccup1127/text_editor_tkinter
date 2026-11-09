@@ -87,6 +87,8 @@ class MainMenu(ttk.Menu):
         s.configure("separator1.TFrame", background=THEME_FONT)
 
         TabFrame.change_tab_theme(LIGHT, LIGHT_FONT)
+
+        self.container.selected_theme = "light"
     
     def dark_theme(self):
         THEME = DARK
@@ -110,6 +112,8 @@ class MainMenu(ttk.Menu):
         s.configure("separator1.TFrame", background=THEME_FONT)
 
         TabFrame.change_tab_theme(DARK, DARK_FONT)
+
+        self.container.selected_theme = "dark"
 
 
     def open_file(self):

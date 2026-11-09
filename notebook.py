@@ -21,6 +21,8 @@ class MainNotebook(ttk.Notebook):
         self.add(tab, text=tabname, **kwargs)
         self.insert(len(self.tabs())-1, self.new_tab, text="+")
         self.select(len(self.tabs())-2)
+        if self.container.selected_theme=="dark":
+            TabFrame.change_tab_theme(app.DARK, app.DARK_FONT)
     
     def new_tab_click(self, event):
         try:
