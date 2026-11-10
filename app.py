@@ -50,10 +50,18 @@ class Sidebar(ttk.Frame):
         self.main_container = ttk.Frame(self)
         self.main_container.pack(side="left", expand=1, fill="both")
 
-        self.title = ttk.Label(self.main_container, font="Calibri 16", text="Content")
+        self.title = ttk.Label(self.main_container, font="Calibri 14", text="OPEN FILES")
         self.title.pack(fill="x")
 
-        self.content = ttk.Treeview(self.main_container)
+        self.content = ttk.Treeview(self.main_container, columns="1")
+        
+        self.xs = tk.Scrollbar(self.main_container,
+        orient="horizontal", command=self.content.xview)
+        self.content.config(xscrollcommand=self.xs.set)
+
+        self.content.heading('#1', text="Folder name", anchor="nw")
+        
+        self.xs.pack(side="bottom", fill="x")
         self.content.pack(expand=1, fill="both")
 
 
