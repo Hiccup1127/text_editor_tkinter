@@ -15,7 +15,7 @@ class MainMenu(ttk.Menu):
 
         def new_tab():
             tab = TabFrame(self.container.notebook)
-            self.container.notebook.add_new(tab)
+            self.container.notebook.add_tab(tab)
         self.file_menu.add_command(label="New file...", command=new_tab)
         self.file_menu.add_separator()
         self.file_menu.add_command(label="Open file...", command=self.open_file)
@@ -24,12 +24,7 @@ class MainMenu(ttk.Menu):
         self.file_menu.add_command(label="Save", command=self.save_file)
         self.file_menu.add_command(label="Save As...", command=self.save_file)
         def close_tab_menu():
-            try:
-                tab = self.container.notebook.select()
-                tab_id = self.container.notebook.index(tab)
-                self.container.notebook.close_tab(tab_id)
-            except Exception: # _tkinter.TclError
-                pass
+            self.container.notebook.close_tab()
         self.file_menu.add_command(label="Close", command=close_tab_menu)
 
         self.edit_menu = tk.Menu(self, bg=LIGHT, fg=LIGHT_FONT)
@@ -107,11 +102,8 @@ class MainMenu(ttk.Menu):
         file_name = path.name.split("/")[-1]
         
         
-        self.container.tab = TabFrame(self.container)
-        self.container.notebook.add_new(
-            self.container.tab,
-            tabname=file_name
-        )
+        self.container.tab = TabFrame(self.container.notebook, file_name)
+        self.container.notebook.add_tab(self.container.tab, file_name)
         self.container.tab.text_screen.insert(
             index=1.0, chars=file.read()
         )
@@ -122,11 +114,8 @@ class MainMenu(ttk.Menu):
 
         self.folder = path[0]
         self.folder_data = path[1]
-        # print(self.folder, self.folder_data)
     
     def save_file(self):
-        
-        # print(tab_id)
-        print(type(TabFrame.get_all_instances()[0]))
-        # print(dir(TabFrame.get_all_instances()[0]))
-        # filedialogs.save_file_path(text)
+        tab = self.container.notebook.get_selected()
+        print(tab, tab.tab_id, tab.tab_name, tab.tab_position)
+        print(tab.text_screen.get(1.0, 'end'))
