@@ -84,7 +84,7 @@ much easier.
 
 
 
-this is the full code of the app.py
+this is the full code of the old version of app.py
 
 ```
 
@@ -275,7 +275,7 @@ if __name__=="__main__":
 ```
 
 
-this is the full code of the top_menu.py
+this is the full code of the old version of top_menu.py
 
 ```
 
