@@ -117,5 +117,5 @@ class MainMenu(ttk.Menu):
     
     def save_file(self):
         tab = self.container.notebook.get_selected()
-        print(tab, tab.tab_id, tab.tab_name, tab.tab_position)
-        print(tab.text_screen.get(1.0, 'end'))
+        text = tab.text_screen.get(1.0, 'end')
+        filedialogs.save_file_path(text)
