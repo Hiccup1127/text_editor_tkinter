@@ -51,16 +51,14 @@ class MainMenu(ttk.Menu):
 
     def save_file(self):
         current_tab = self.container.notebook.get_selected()
-        if current_tab.tab_file_path is None:
+        if current_tab.tab_file_path is None: # IF THE FILE IS NEW
             self.save_file_as()
-        else:
-            text = current_tab.text_screen.get(1.0, 'end') # I don't like this: if the text
-            f.save_file_path(text, current_tab.tab_file_path) # is too big, the size of text
-                                            # variable will be enormous, should parse the text
-    def save_file_as(self):                     # by chunks; gotta solve this issue
+        else:                           # IF THE FILE IS  NOT  NEW
+            f.save_file_path(current_tab, self.container.notebook)
+
+    def save_file_as(self):                     
         current_tab = self.container.notebook.get_selected()
-        text = current_tab.text_screen.get(1.0, 'end') # here it is, as well
-        new_current_tab_file = f.save_file_path(text)
+        new_current_tab_file = f.save_file_path(current_tab, self.container.notebook)
         if new_current_tab_file is not None:
             current_tab.tab_file_path = new_current_tab_file
     

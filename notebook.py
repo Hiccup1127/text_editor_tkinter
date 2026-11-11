@@ -12,11 +12,16 @@ class MainNotebook(ttk.Notebook):
         self.bind("<Button1-Motion>", self.tab_ordering)
         self.pack(expand=True, fill="both")
     
-    def add_tab(self, tab: TabFrame(), label: str="untitled", **kwargs):
-        self.add(tab, text=label, **kwargs)
+    def add_tab(self, tab: TabFrame(), label: str="untitled"):
+        self.add(tab, text=label)
         self.select(len(self.tabs())-1)
         if self.container.selected_theme=="dark":
             TabFrame.change_tab_theme(app.DARK, app.DARK_FONT)
+
+    def change_tab(self, label: str="untitled"):
+        current_tab_head = self.tab(self.select(), text=label)
+        current_tab_head["text"] = label
+        print(current_tab_head)
 
     def close_tab(self):
         tab = self.get_selected()

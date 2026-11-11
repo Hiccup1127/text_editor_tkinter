@@ -19,7 +19,7 @@ work_dir = {
 
 
 def get_file(active_notebook: notebook.MainNotebook=None):
-    path = filedialog.askopenfile(
+    file_object = filedialog.askopenfile(
         title="Open a file ...",
         filetypes=(
             ("Text file", "*.txt"),
@@ -27,29 +27,35 @@ def get_file(active_notebook: notebook.MainNotebook=None):
             ("All files", ["*.*",])
         )
     )
+    file_path = file_object.name
     if active_notebook:
-        with open(path.name, "rb") as file:
-            file_name = path.name.split("/")[-1]
+        with open(file_path, "rb") as file:
+            file_name = file_path.split("/")[-1]
             
             active_notebook.tab_new = notebook.TabFrame(active_notebook, file_name)
             active_notebook.add_tab(active_notebook.tab_new, file_name)
             active_notebook.tab_new.text_screen.insert(
                 index=1.0, chars=file.read())
-            active_notebook.tab_new.tab_file_path = path.name
+            active_notebook.tab_new.tab_file_path = file_path
             active_notebook.select(active_notebook.tab_new)
-    return path
+    return file_object
 
 
-def save_file_path(text: str, optional_file_path: str=None):
-    if optional_file_path is not None:
+def save_file_path(
+    active_tab: notebook.TabFrame=None,
+    active_notebook: notebook.MainNotebook=None,
+    optional_text: str="hello!",
+):
+    if active_tab.tab_file_path is not None: # ON MENU "SAVE"
         try:
-            with open(optional_file_path, "w") as new_file:
-                new_file.write(text)
-                new_file.close()
-            return optional_file_path
+            tab_text = active_tab.text_screen.get(1.0, 'end') # should do by chuncks
+            with open(active_tab.tab_file_path, "w") as file_to_write:
+                file_to_write.write(tab_text)
+                file_to_write.close()
+            return active_tab.tab_file_path
         except Exception as e:
             return f"Got an unexpected error: {e}";
-    else:
+    else:                                   # ON MENU "SAVE ASs"
         try:  
             file_object = filedialog.asksaveasfile(
                 defaultextension=".txt",
@@ -60,9 +66,20 @@ def save_file_path(text: str, optional_file_path: str=None):
                 ),
             )
             file_path = file_object.name
-            with open(file_path, "w") as new_file:
-                new_file.write(text)
-                new_file.close()
+
+            if active_tab:
+                file_name = file_path.split("/")[-1]
+                tab_text = active_tab.text_screen.get(1.0, 'end') # should do by chuncks
+                with open(file_path, "w") as new_file:
+                    new_file.write(tab_text)
+                    new_file.close()
+                active_notebook.change_tab(file_name)
+                active_tab.tab_file_path = file_path
+                active_tab.tab_name = file_name
+            else: # this is for if it's needed somewhere outside the notebook
+                with open(file_path, "w") as new_file:
+                    new_file.write(optional_text)
+                    new_file.close()
             return file_path
             # print(file_object) # complete refreshing the tab after saving new file            
         except UnboundLocalError, AttributeError:
