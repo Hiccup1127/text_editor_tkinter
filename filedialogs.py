@@ -8,13 +8,10 @@ import os
 from os import walk
 
 
-files = []
-
 work_dir = {
     "Path": None,
     "Name": None,
-    "SubDirectories": {},
-    "DirectoryFiles": []
+    "Files": [],
 }
 
 # CHECK the problems/file_saving.py to read some of my notes
@@ -71,19 +68,39 @@ def save_file(active_notebook: notebook.MainNotebook=None, force=False):
         return e;
 
 def open_folder():
-    try:
-        folder = filedialog.askdirectory(
+    # try:
+        path = filedialog.askdirectory(
             title="Open a folder ...",
             initialdir = "C:\\Users\\"
         )
-
-        path = folder
-        folder_name = folder.split("/")[-1]
-        folder_data = folder[1]
+        list_of_files = []
+        for i in os.listdir(path):
+            path_to_the_file = os.path.join(path, i)
+            if os.path.isfile(path_to_the_file):
+                list_of_files.append((i, path_to_the_file.replace("\\", "/")))
 
         work_dir["Path"] = path
-        work_dir["Name"] = folder_name
+        work_dir["Name"] = path.split("/")[-1]
+        work_dir["Files"] = list_of_files
+
+        # temporary_list = []
+        # for root, dirs, files in os.walk(path):
+        #     temporary_list.append(
+        #         {"Path":root,
+        #          "Name":root.split("\\")[-1],
+        #          "DirectoryFolders":dirs,
+        #          "DirectoryFiles":files})
+        # root = temporary_list[0]
+        # temporary_list = temporary_list[1:]
+
+        # work_dir["Path"] = root.get("Path")
+        # work_dir["Name"] = path.split("/")[-1]
+        # work_dir["DirectoryFolders"] = root.get("DirectoryFolders")
+        # work_dir["DirectoryFiles"] = root.get("DirectoryFiles")
+        # work_dir["SubDirectories"] = temporary_list
+
+        # print(work_dir)
 
         return work_dir
-    except IndexError:
-        return;
+    # except IndexError:
+    #     return;

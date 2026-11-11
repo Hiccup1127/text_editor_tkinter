@@ -59,12 +59,11 @@ class MainMenu(ttk.Menu):
     
     def get_folder(self):
         dir = f.open_folder()
-        self.container.sidebar.open_directory(f.work_dir.get("Name"))
+        self.container.sidebar.open_directory(dir)
     
     def close_folder(self):
         dir = f.work_dir
         dir["Path"] = None
         dir["Name"] = None
-        dir["SubDirectories"] = {}
-        dir["DirectoryFiles"] = []
+        dir["Files"] = []
         self.container.sidebar.forget_directory()
