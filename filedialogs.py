@@ -17,46 +17,36 @@ work_dir = {
     "DirectoryFiles": []
 }
 
-
-def get_file(active_notebook: notebook.MainNotebook=None):
-    file_object = filedialog.askopenfile(
-        title="Open a file ...",
-        filetypes=(
-            ("Text file", "*.txt"),
-            ("Python code", "*.py"),
-            ("All files", ["*.*",])
+# CHECK the problems/file_saving.py to read some of my notes
+def open_file(active_notebook: notebook.MainNotebook=None):
+    try:
+        file_object = filedialog.askopenfile(
+            title="Open a file ...",
+            filetypes=(
+                ("Text file", "*.txt"),
+                ("Python code", "*.py"),
+                ("All files", ["*.*",])
+            )
         )
-    )
-    file_path = file_object.name
-    if active_notebook:
+        file_path = file_object.name
+        file_name = file_path.split("/")[-1]
+        active_notebook.tab_new = notebook.TabFrame(active_notebook, file_name)
+        active_notebook.add_tab(active_notebook.tab_new, file_name)
         with open(file_path, "rb") as file:
-            file_name = file_path.split("/")[-1]
-            
-            active_notebook.tab_new = notebook.TabFrame(active_notebook, file_name)
-            active_notebook.add_tab(active_notebook.tab_new, file_name)
             active_notebook.tab_new.text_screen.insert(
                 index=1.0, chars=file.read())
-            active_notebook.tab_new.tab_file_path = file_path
-            active_notebook.select(active_notebook.tab_new)
-    return file_object
+        active_notebook.tab_new.tab_file_path = file_path
+        active_notebook.select(active_notebook.tab_new)
+        return file_path
+    except Exception as e:
+        print(f"Can't OPEN the file, {e}")
+        return e;
 
-
-def save_file_path(
-    active_tab: notebook.TabFrame=None,
-    active_notebook: notebook.MainNotebook=None,
-    optional_text: str="hello!",
-):
-    if active_tab.tab_file_path is not None: # ON MENU "SAVE"
-        try:
-            tab_text = active_tab.text_screen.get(1.0, 'end') # should do by chuncks
-            with open(active_tab.tab_file_path, "w") as file_to_write:
-                file_to_write.write(tab_text)
-                file_to_write.close()
-            return active_tab.tab_file_path
-        except Exception as e:
-            return f"Got an unexpected error: {e}";
-    else:                                   # ON MENU "SAVE ASs"
-        try:  
+def save_file(active_notebook: notebook.MainNotebook=None, force=False):
+    try:
+        active_tab = active_notebook.get_selected()
+        tab_text = active_tab.text_screen.get(1.0, 'end') # should do by chuncks btw
+        if active_tab.tab_file_path is None or force==True: # new tab or force
             file_object = filedialog.asksaveasfile(
                 defaultextension=".txt",
                 filetypes = (
@@ -66,26 +56,21 @@ def save_file_path(
                 ),
             )
             file_path = file_object.name
+            file_name = file_path.split("/")[-1]
+            with open(file_path, "w") as new_file:
+                new_file.write(tab_text)
+            active_notebook.change_tab(file_name)
+            active_tab.tab_name = file_name
+            active_tab.tab_file_path = file_path
+        else: # not new tab, updating the existing file
+            with open(active_tab.tab_file_path, "w") as file_to_write:
+                file_to_write.write(tab_text)
+        return active_tab.tab_file_path
+    except Exception as e:
+        print(f"Can't SAVE the file, {e}")
+        return e;
 
-            if active_tab:
-                file_name = file_path.split("/")[-1]
-                tab_text = active_tab.text_screen.get(1.0, 'end') # should do by chuncks
-                with open(file_path, "w") as new_file:
-                    new_file.write(tab_text)
-                    new_file.close()
-                active_notebook.change_tab(file_name)
-                active_tab.tab_file_path = file_path
-                active_tab.tab_name = file_name
-            else: # this is for if it's needed somewhere outside the notebook
-                with open(file_path, "w") as new_file:
-                    new_file.write(optional_text)
-                    new_file.close()
-            return file_path
-            # print(file_object) # complete refreshing the tab after saving new file            
-        except UnboundLocalError, AttributeError:
-            return;
-
-def get_folder():
+def open_folder():
     try:
         folder = filedialog.askdirectory(
             title="Open a folder ...",
@@ -100,16 +85,5 @@ def get_folder():
         work_dir["Name"] = folder_name
 
         return work_dir
-        # data = listdir(folder)
-
-        # f = []
-        # for dd, ddn, fn in walk(folder):
-        #     f.append(dd)
-        #     f.append(ddn)
-        #     f.append(fn)
-        
-        # print(f)
-
-        # return folder, data
     except IndexError:
         return;

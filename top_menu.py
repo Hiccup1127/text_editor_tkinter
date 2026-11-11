@@ -13,19 +13,14 @@ class MainMenu(ttk.Menu):
         self.file_menu = tk.Menu(self, bg=LIGHT, fg=LIGHT_FONT)
         self.add_cascade(label="File", menu=self.file_menu)
 
-        def new_tab():
-            tab = TabFrame(self.container.notebook)
-            self.container.notebook.add_tab(tab)
-        self.file_menu.add_command(label="New file...", command=new_tab)
+        self.file_menu.add_command(label="New file...", command=self.new_tab)
         self.file_menu.add_separator()
-        self.file_menu.add_command(label="Open file...", command=self.open_file)
-        self.file_menu.add_command(label="Open folder...", command=self.open_folder)
+        self.file_menu.add_command(label="Open file...", command=self.get_file)
+        self.file_menu.add_command(label="Open folder...", command=self.get_folder)
         self.file_menu.add_separator()
-        self.file_menu.add_command(label="Save", command=self.save_file)
-        self.file_menu.add_command(label="Save As...", command=self.save_file_as)
-        def close_tab_menu():
-            self.container.notebook.close_tab()
-        self.file_menu.add_command(label="Close", command=close_tab_menu)
+        self.file_menu.add_command(label="Save", command=self.set_file)
+        self.file_menu.add_command(label="Save As...", command=self.set_file_as)
+        self.file_menu.add_command(label="Close", command=self.close_tab)
         self.file_menu.add_command(label="Close folder", command=self.close_folder)
 
         self.edit_menu = tk.Menu(self, bg=LIGHT, fg=LIGHT_FONT)
@@ -46,29 +41,30 @@ class MainMenu(ttk.Menu):
         self.theme_menu.add_separator()
         self.theme_menu.add_command(label="Settings")
 
-    def open_file(self):
-        f.get_file(self.container.notebook)
-
-    def save_file(self):
-        current_tab = self.container.notebook.get_selected()
-        if current_tab.tab_file_path is None: # IF THE FILE IS NEW
-            self.save_file_as()
-        else:                           # IF THE FILE IS  NOT  NEW
-            f.save_file_path(current_tab, self.container.notebook)
-
-    def save_file_as(self):                     
-        current_tab = self.container.notebook.get_selected()
-        new_current_tab_file = f.save_file_path(current_tab, self.container.notebook)
-        if new_current_tab_file is not None:
-            current_tab.tab_file_path = new_current_tab_file
+    def new_tab(self):
+        tab = TabFrame(self.container.notebook)
+        self.container.notebook.add_tab(tab)
     
-    def open_folder(self):
-        dir = f.get_folder()
+    def close_tab(self):
+        self.container.notebook.close_tab()
+
+    def get_file(self):
+        file = f.open_file(self.container.notebook)
+
+    def set_file(self):
+        file = f.save_file(self.container.notebook)
+
+    def set_file_as(self):                     
+        file = f.save_file(self.container.notebook, force=True)
+    
+    def get_folder(self):
+        dir = f.open_folder()
         self.container.sidebar.open_directory(f.work_dir.get("Name"))
     
     def close_folder(self):
-        f.work_dir["Path"] = None
-        f.work_dir["Name"] = None
-        f.work_dir["SubDirectories"] = {}
-        f.work_dir["DirectoryFiles"] = []
+        dir = f.work_dir
+        dir["Path"] = None
+        dir["Name"] = None
+        dir["SubDirectories"] = {}
+        dir["DirectoryFiles"] = []
         self.container.sidebar.forget_directory()

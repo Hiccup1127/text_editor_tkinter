@@ -29,10 +29,13 @@ class MainNotebook(ttk.Notebook):
         self.forget(self.index(self.select()))
     
     def get_selected(self):
-        tab_id = self.select()[-1]
-        if str.isalpha(tab_id):
-            tab_id = "1"
-        return TabFrame.get_instance(int(tab_id))
+        try:
+            tab_id = self.select()[-1]
+            if str.isalpha(tab_id):
+                tab_id = "1"
+            return TabFrame.get_instance(int(tab_id))
+        except IndexError:
+            raise IndexError("All the tabs are gone.")
 
     def tab_ordering(self, event):
         try:
