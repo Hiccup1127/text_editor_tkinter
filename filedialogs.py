@@ -10,7 +10,7 @@ work_dir = {
     "Path": None,
     "Name": None,
     "SubDirectories": {},
-    "Files": []
+    "DirectoryFiles": []
 }
 
 

@@ -2,25 +2,19 @@ import tkinter as tk
 import ttkbootstrap as ttk
 import tkinter.scrolledtext as st 
 
-import app, top_menu, filedialogs
+import app
 
 
 class MainNotebook(ttk.Notebook):
     def __init__(self, container):
         super().__init__(container)
         self.container = container
-
-        # self.new_tab = TabFrame(self)
-        # self.insert(len(self.tabs()), self.new_tab, text="+")
-
-        # self.bind("<Button-1>", self.new_tab_click)
         self.bind("<Button1-Motion>", self.tab_ordering)
         self.pack(expand=True, fill="both")
     
     def add_tab(self, tab: TabFrame(), label: str="untitled", **kwargs):
         self.add(tab, text=label, **kwargs)
-        # self.insert(len(self.tabs())-1, self.new_tab, text="+")
-        self.select(len(self.tabs())-1) # self.select(len(self.tabs())-2)
+        self.select(len(self.tabs())-1)
         if self.container.selected_theme=="dark":
             TabFrame.change_tab_theme(app.DARK, app.DARK_FONT)
 
@@ -44,15 +38,6 @@ class MainNotebook(ttk.Notebook):
         except Exception: # _tkinter.TclError
             pass
 
-    # def new_tab_click(self, event):
-    #     try:
-    #         current_index = self.index(f"@{event.x},{event.y}")
-    #         if current_index==self.index(self.new_tab):
-    #             tab = TabFrame(self)
-    #             self.add_new(tab)
-    #     except Exception: # _tkinter.TclError
-    #         pass
-
 
 class TabFrame(ttk.Frame):
     instances = []
@@ -72,24 +57,16 @@ class TabFrame(ttk.Frame):
 
 
         self.text_frame = ttk.Frame(self)
-
-        # self.text_screen = ttk.Text(self.text_frame)
         self.text_screen = st.ScrolledText(self.text_frame,
             background=app.LIGHT,
             insertbackground=app.LIGHT_FONT,
             foreground=app.LIGHT_FONT,
             font=app.TEXT_FONT
         )
-        # self.vs = ttk.Scrollbar(self.text_frame, command=self.text_screen.yview)
-        # self.text_screen.config(yscrollcommand=self.vs.set)
-        
-        # self.vs.pack(fill="y", side="right")
         self.text_screen.pack(expand=True, fill="both", side="right")
-
         self.text_frame.pack(expand=True, fill="both")
 
 
-        # self.config(padding=1)
         self.pack(expand=True, fill="both")
 
     @classmethod

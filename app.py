@@ -22,12 +22,8 @@ class Application(tk.Tk):
         super().__init__()
         self.title(title)
         self.geometry("800x600")
-
-
         self.selected_theme = "light"
-        self.top_menu = top_menu.MainMenu(self)
-        self.config(menu=self.top_menu)
-        self.top_menu.light_theme()
+        self.light_theme()
 
 
         self.sidebar = Sidebar(self)
@@ -38,8 +34,49 @@ class Application(tk.Tk):
         self.tab1 = TabFrame(self.notebook, "new")
         self.notebook.add_tab(self.tab1, "new")
 
+        self.top_menu = top_menu.MainMenu(self)
+        self.config(menu=self.top_menu)
+
 
         self.bind("q", lambda e: self.destroy())
+    
+    def light_theme(self):
+        s = ttk.Style()
+        s.layout("TNotebook", [])
+        s.configure("TNotebook", background=LIGHT, foreground=LIGHT_FONT)
+        s.configure("TNotebook", tabmargins=0)
+        s.configure("TNotebook.Tab", background=LIGHT, foreground=LIGHT_FONT)
+        s.map("TNotebook.Tab", background=[("active", LIGHT_HOVER),
+                                           ("selected", LIGHT_SELECTED)],
+                               foreground=[("selected", LIGHT_FONT)])
+        s.configure("TLabel", background=LIGHT, foreground=LIGHT_FONT)
+        s.configure("TFrame", background=LIGHT)
+        s.configure("Treeview", background=LIGHT, foreground=LIGHT_FONT)
+        s.configure("Treeview.Heading", background=LIGHT, foreground=LIGHT_FONT)
+        s.map("Treeview", background=[("selected", LIGHT_SELECTED)],
+                          foreground=[("selected", LIGHT_FONT)])
+        s.configure("separator1.TFrame", background=LIGHT_FONT)
+        TabFrame.change_tab_theme(LIGHT, LIGHT_FONT)
+        self.selected_theme = "light"
+    
+    def dark_theme(self):
+        s = ttk.Style()
+        s.layout("TNotebook", [])
+        s.configure("TNotebook", background=DARK, foreground=DARK_FONT)
+        s.configure("TNotebook", tabmargins=0)
+        s.configure("TNotebook.Tab", background=DARK, foreground=DARK_FONT)
+        s.map("TNotebook.Tab", background=[("active", DARK_HOVER),
+                                           ("selected", DARK_SELECTED)],
+                               foreground=[("selected", DARK_FONT)])
+        s.configure("TLabel", background=DARK, foreground=DARK_FONT)
+        s.configure("TFrame", background=DARK)
+        s.configure("Treeview", background=DARK, foreground=DARK_FONT)
+        s.configure("Treeview.Heading", background=DARK, foreground=DARK_FONT)
+        s.map("Treeview", background=[("selected", DARK_SELECTED)],
+                          foreground=[("selected", DARK_FONT)])
+        s.configure("separator1.TFrame", background=DARK_FONT)
+        TabFrame.change_tab_theme(DARK, DARK_FONT)
+        self.selected_theme = "dark"
 
 
 class Sidebar(ttk.Frame):
@@ -72,15 +109,15 @@ class Sidebar(ttk.Frame):
     def resize(self, event):
         const_width = 250
         if event.x > 5:
-            event.x = 1
+            event.x = 3
             self.width += event.x
         elif event.x < -5: 
-            event.x = -1
+            event.x = -3
             self.width += event.x
         else:
             self.width += event.x
 
-        if self.width > 400 or self.width < 220:
+        if self.width > 700 or self.width < 220:
             return;
         else:
             self.config(width=self.width)
@@ -125,6 +162,8 @@ class Sidebar(ttk.Frame):
         self.__class__.current_dir = True
 
     def forget_directory(self):
+        if not self.__class__.current_dir:
+            return True
         self.dir_name.pack_forget()
         self.content.pack_forget()
         self.__class__.current_dir = False

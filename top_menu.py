@@ -41,62 +41,10 @@ class MainMenu(ttk.Menu):
         self.theme_menu = tk.Menu(self, bg=LIGHT, fg=LIGHT_FONT)
         self.add_cascade(label="Theme", menu=self.theme_menu)
 
-        self.theme_menu.add_command(label="Light",command=self.light_theme)
-        self.theme_menu.add_command(label="Dark", command=self.dark_theme)
+        self.theme_menu.add_command(label="Light",command=self.container.light_theme)
+        self.theme_menu.add_command(label="Dark", command=self.container.dark_theme)
         self.theme_menu.add_separator()
         self.theme_menu.add_command(label="Settings")
-
-    def light_theme(self):
-        THEME = LIGHT
-        THEME_FONT = LIGHT_FONT
-        THEME_HOVER = LIGHT_HOVER
-        THEME_SELECTED = LIGHT_SELECTED
-        s = ttk.Style()
-        
-        s.layout("TNotebook", [])
-        s.configure("TNotebook", background=THEME, foreground=THEME_FONT)
-        s.configure("TNotebook", tabmargins=0)
-        s.configure("TNotebook.Tab", background=THEME, foreground=THEME_FONT)
-        s.map("TNotebook.Tab", background=[("active", THEME_HOVER),
-                                           ("selected", THEME_SELECTED)],
-                               foreground=[("selected", THEME_FONT)])
-        s.configure("TLabel", background=THEME, foreground=THEME_FONT)
-        s.configure("TFrame", background=THEME)
-        s.configure("Treeview", background=THEME, foreground=THEME_FONT)
-        s.configure("Treeview.Heading", background=THEME, foreground=THEME_FONT)
-        s.map("Treeview", background=[("selected", THEME_SELECTED)],
-                          foreground=[("selected", THEME_FONT)])
-        s.configure("separator1.TFrame", background=THEME_FONT)
-
-        TabFrame.change_tab_theme(LIGHT, LIGHT_FONT)
-
-        self.container.selected_theme = "light"
-    
-    def dark_theme(self):
-        THEME = DARK
-        THEME_FONT = DARK_FONT
-        THEME_HOVER = DARK_HOVER
-        THEME_SELECTED = DARK_SELECTED
-        s = ttk.Style()
-        
-        s.layout("TNotebook", [])
-        s.configure("TNotebook", background=THEME, foreground=THEME_FONT)
-        s.configure("TNotebook", tabmargins=0)
-        s.configure("TNotebook.Tab", background=THEME, foreground=THEME_FONT)
-        s.map("TNotebook.Tab", background=[("active", THEME_HOVER),
-                                           ("selected", THEME_SELECTED)],
-                               foreground=[("selected", THEME_FONT)])
-        s.configure("TLabel", background=THEME, foreground=THEME_FONT)
-        s.configure("TFrame", background=THEME)
-        s.configure("Treeview", background=THEME, foreground=THEME_FONT)
-        s.configure("Treeview.Heading", background=THEME, foreground=THEME_FONT)
-        s.map("Treeview", background=[("selected", THEME_SELECTED)],
-                          foreground=[("selected", THEME_FONT)])
-        s.configure("separator1.TFrame", background=THEME_FONT)
-
-        TabFrame.change_tab_theme(DARK, DARK_FONT)
-
-        self.container.selected_theme = "dark"
 
     def open_file(self):
         path = f.get_file()
@@ -112,15 +60,13 @@ class MainMenu(ttk.Menu):
     
     def open_folder(self):
         dir = f.get_folder()
-        print(dir)
         self.container.sidebar.open_directory(f.work_dir.get("Name"))
     
     def close_folder(self):
         f.work_dir["Path"] = None
         f.work_dir["Name"] = None
         f.work_dir["SubDirectories"] = {}
-        f.work_dir["Files"] = []
-        print(f.work_dir)
+        f.work_dir["DirectoryFiles"] = []
         self.container.sidebar.forget_directory()
     
     def save_file_as(self):
