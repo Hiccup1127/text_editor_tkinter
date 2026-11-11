@@ -51,6 +51,7 @@ class TabFrame(ttk.Frame):
         self.tab_id = index_before_last
         self.tab_name = tab_name
         self.tab_position = len(container.tabs())
+        self.tab_file_path = None
 
         self.__class__.instances.append(
             (self, self.tab_name, self.tab_id, self.tab_position))

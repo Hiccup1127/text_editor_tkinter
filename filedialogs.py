@@ -6,6 +6,8 @@ import os
 from os import walk
 
 
+files = []
+
 work_dir = {
     "Path": None,
     "Name": None,
@@ -23,24 +25,39 @@ def get_file():
             ("All files", ["*.*",])
         )
     )
+
+    # move the "with" open file statement to here from line 51 top_menu.py
+
     return file
 
 
-def save_file_path(text: str):
-    file_save = filedialog.asksaveasfile(
-        defaultextension=".txt",
-        filetypes = (
-            ("Text file", ".txt"),
-            ("Python code", ".py"),
-            ("All files", ".*")
-        ),
-        # initialdir="C:\\Users\\"
-    )
-    if file_save is None:
-        return;
-    with open(file_save, "wb") as file_save:
-        file_save.write(text)
-        file_save.close()
+def save_file_path(text: str, optional_file_path: str=None):
+    if optional_file_path is not None:
+        # try:
+        with open(optional_file_path, "w") as new_file:
+            new_file.write(text)
+            new_file.close()
+        # except Exception:
+        #     pass
+    else:    
+        file_object = filedialog.asksaveasfile(
+            defaultextension=".txt",
+            filetypes = (
+                ("Text file", ".txt"),
+                ("Python code", ".py"),
+                ("All files", ".*")
+            ),
+            # initialdir="C:\\Users\\"
+        )
+        if file_path is None:
+            return;
+        file_path = file_object.name
+
+        print(file_object) # complete refreshing tab after saving new file
+        
+        # with open(file_path, "w") as new_file:
+        #     new_file.write(text)
+        #     new_file.close()
 
 def get_folder():
     folder = filedialog.askdirectory(

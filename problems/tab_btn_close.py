@@ -1,4 +1,5 @@
-# Uncolmleted mechanism of closing button in notebook widget
+# Uncolmleted mechanism of closing button, that tiny x cross icon
+# at the right of each tab to close it, in notebook widget.
 
 
 # class MainNotebook(ttk.Notebook):

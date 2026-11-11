@@ -21,7 +21,7 @@ class MainMenu(ttk.Menu):
         self.file_menu.add_command(label="Open file...", command=self.open_file)
         self.file_menu.add_command(label="Open folder...", command=self.open_folder)
         self.file_menu.add_separator()
-        self.file_menu.add_command(label="Save", command=None)
+        self.file_menu.add_command(label="Save", command=self.save_file)
         self.file_menu.add_command(label="Save As...", command=self.save_file_as)
         def close_tab_menu():
             self.container.notebook.close_tab()
@@ -51,12 +51,26 @@ class MainMenu(ttk.Menu):
         with open(path.name, "rb") as file:
             file_name = path.name.split("/")[-1]
             
-            self.container.tab = TabFrame(self.container.notebook, file_name)
-            self.container.notebook.add_tab(self.container.tab, file_name)
-            self.container.tab.text_screen.insert(
+            self.container.tab_new = TabFrame(self.container.notebook, file_name)
+            self.container.notebook.add_tab(self.container.tab_new, file_name)
+            self.container.tab_new.text_screen.insert(
                 index=1.0, chars=file.read()
             )
-            self.container.notebook.select(self.container.tab)
+            self.container.tab_new.tab_file_path = path.name
+            self.container.notebook.select(self.container.tab_new)
+
+    def save_file(self):
+        current_tab = self.container.notebook.get_selected()
+        if current_tab.tab_file_path is None:
+            self.save_file_as()
+        else:
+            text = current_tab.text_screen.get(1.0, 'end')
+            f.save_file_path(text, current_tab.tab_file_path)
+
+    def save_file_as(self):
+        tab = self.container.notebook.get_selected()
+        text = tab.text_screen.get(1.0, 'end')
+        f.save_file_path(text)
     
     def open_folder(self):
         dir = f.get_folder()
@@ -68,8 +82,3 @@ class MainMenu(ttk.Menu):
         f.work_dir["SubDirectories"] = {}
         f.work_dir["DirectoryFiles"] = []
         self.container.sidebar.forget_directory()
-    
-    def save_file_as(self):
-        tab = self.container.notebook.get_selected()
-        text = tab.text_screen.get(1.0, 'end')
-        filedialogs.save_file_path(text)
