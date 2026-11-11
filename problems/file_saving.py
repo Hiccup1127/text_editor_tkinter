@@ -35,3 +35,33 @@ def open_file(path: str=None):
 
 # In filedialogs.py the problem is that I have notebook instead of
 # the python strings. But it's ok now.
+
+
+
+# Also, I tried parsing all the file structure from given path in 
+# get_folder() function, but I didn't figure it out :(
+
+
+# def open_folder(path: str=None):
+#     if path is None:
+#         path = filedialog.askdirectory(
+#             title="Open a folder ...",
+#             initialdir = "C:\\Users\\"
+#         )
+#     temporary_list = []
+#     for root, dirs, files in os.walk(path):
+#         temporary_list.append(
+#             {"Path":root,
+#              "Name":root.split("\\")[-1],
+#              "DirectoryFolders":dirs,
+#              "DirectoryFiles":files})
+#     root = temporary_list[0]
+#     temporary_list = temporary_list[1:]
+
+#     work_dir["Path"] = root.get("Path")
+#     work_dir["Name"] = path.split("/")[-1]
+#     work_dir["DirectoryFolders"] = root.get("DirectoryFolders")
+#     work_dir["DirectoryFiles"] = root.get("DirectoryFiles")
+#     work_dir["SubDirectories"] = temporary_list
+
+#     print(work_dir)

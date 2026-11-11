@@ -51,7 +51,8 @@ class Application(tk.Tk):
                                foreground=[("selected", LIGHT_FONT)])
         s.configure("TLabel", background=LIGHT, foreground=LIGHT_FONT)
         s.configure("TFrame", background=LIGHT)
-        s.configure("Treeview", background=LIGHT, foreground=LIGHT_FONT)
+        s.configure("Treeview", background=LIGHT,foreground=LIGHT_FONT,
+                                font=("Calibri", 11))
         s.configure("Treeview.Heading", background=LIGHT, foreground=LIGHT_FONT)
         s.map("Treeview", background=[("selected", LIGHT_SELECTED)],
                           foreground=[("selected", LIGHT_FONT)])
@@ -82,6 +83,7 @@ class Application(tk.Tk):
 class Sidebar(ttk.Frame):
     def __init__(self, container):
         super().__init__(container)
+        self.container = container
         self.width = 250
         self.config(width=self.width)
         self.pack_propagate(0)
@@ -90,7 +92,7 @@ class Sidebar(ttk.Frame):
         self.main_container = ttk.Frame(self)
         self.main_container.pack(side="left", expand=1, fill="both")
 
-        self.title = ttk.Label(self.main_container, font="Calibri 14", text="OPEN FILES")
+        self.title = ttk.Label(self.main_container, font="Calibri 16", text="OPEN FILES")
         self.title.pack(fill="x", pady=(0, 15))
 
 
@@ -124,42 +126,46 @@ class Sidebar(ttk.Frame):
     
     current_dir = False
 
-    def open_directory(self, folder_name: str):
+    def open_directory(self, directory: str):
         if self.__class__.current_dir:
             self.forget_directory()
-        self.dir_name = ttk.Label(self.main_container, font="Calibri 12", text=folder_name)
+        self.dir_name = ttk.Label(self.main_container, font="Calibri 14", text=directory["Name"])
         self.dir_name.pack(fill="x", pady=(0, 10))
 
         self.content = ttk.Treeview(self.main_container, columns=("Dir"), show="tree")
-        self.content.column("#0", width=30)
+        self.content.column("#0", width=0)
         self.content.heading("Dir", text="Folder", anchor="w")
+            
+        for n, p in directory["Files"]:
+            a = self.content.insert("", 'end', values=(n))
 
-        a = self.content.insert("", 'end', values=("Folder1"))
-        self.content.insert(a, 'end', values=("Folder12"))
-        self.content.insert(a, 'end', values=("Folder13"))
-        b = self.content.insert("", 'end', values=("Folder2"))
-        self.content.insert(b, 'end', values=("Folder22"))
-        self.content.insert(b, 'end', values=("Folder23"))
-        c = self.content.insert("", 'end', values=("Folder3"))
-        d = self.content.insert(c, 'end', values=("Folder32"))
-        self.content.insert(d, 'end', values=("Folder33"))
-        self.content.insert(d, 'end', values=("Folder33"))
-        self.content.insert(d, 'end', values=("FILE"))
-        self.content.insert("", 'end', values=("File"))
-        self.content.insert("", 'end', values=("File"))
-        self.content.insert("", 'end', values=("File"))
-        self.content.insert("", 'end', values=("File"))
-        self.content.insert("", 'end', values=("File"))
+
+        self.right_click_menu_on_sidebar = tk.Menu(self.container)
+        self.right_click_menu_on_sidebar.add_command(label="Rename...",
+            command=self.rename_file_in_directory)
+        self.right_click_menu_on_sidebar.add_command(label="Copy path") # implement this
 
         self.content.bind("<Button-1>", lambda e: self.content.selection_set(()))
+        self.content.bind("<Button-3>", lambda e:
+            self.right_click_menu_on_sidebar.tk_popup(e.x_root, e.y_root))
 
+        # TO DO: COPY PATH; RENAME; OPEN BY A CLICK; AND THAT'D BE THE END!
         self.xs = tk.Scrollbar(self.main_container,
         orient="horizontal", command=self.content.xview)
         self.content.config(xscrollcommand=self.xs.set)
         self.xs.pack(side="bottom", fill="x")
         self.content.pack(expand=1, fill="both")
 
+        self.directory = directory
         self.__class__.current_dir = True
+
+    def rename_file_in_directory(self):
+        focused_file = self.content.focus() # implement opening the file by double-click
+        index = int(focused_file[1:])-1
+        print(self.directory["Files"][index]) # complete renaming the files feature
+        x = input("-> ")
+        self.content.insert("", str(focused_file)[1:], values=(x))
+        self.content.delete(focused_file)
 
     def forget_directory(self):
         if not self.__class__.current_dir:

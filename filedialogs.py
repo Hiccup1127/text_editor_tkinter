@@ -8,13 +8,10 @@ import os
 from os import walk
 
 
-files = []
-
 work_dir = {
     "Path": None,
     "Name": None,
-    "SubDirectories": {},
-    "DirectoryFiles": []
+    "Files": [],
 }
 
 # CHECK the problems/file_saving.py to read some of my notes
@@ -70,20 +67,24 @@ def save_file(active_notebook: notebook.MainNotebook=None, force=False):
         print(f"Can't SAVE the file, {e}")
         return e;
 
-def open_folder():
+def open_folder(path: str=None):
     try:
-        folder = filedialog.askdirectory(
-            title="Open a folder ...",
-            initialdir = "C:\\Users\\"
-        )
-
-        path = folder
-        folder_name = folder.split("/")[-1]
-        folder_data = folder[1]
+        if path is None:
+            path = filedialog.askdirectory(
+                title="Open a folder ...",
+                initialdir = "C:\\Users\\"
+            )
+        list_of_files = []
+        for i in os.listdir(path):
+            path_to_the_file = os.path.join(path, i)
+            if os.path.isfile(path_to_the_file):
+                list_of_files.append((i, path_to_the_file.replace("\\", "/")))
 
         work_dir["Path"] = path
-        work_dir["Name"] = folder_name
+        work_dir["Name"] = path.split("/")[-1]
+        work_dir["Files"] = list_of_files
 
         return work_dir
-    except IndexError:
-        return;
+    except Exception as e:
+        print(f"Can't OPEN the directory, {e}")
+        return e;
