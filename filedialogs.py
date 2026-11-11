@@ -67,12 +67,13 @@ def save_file(active_notebook: notebook.MainNotebook=None, force=False):
         print(f"Can't SAVE the file, {e}")
         return e;
 
-def open_folder():
-    # try:
-        path = filedialog.askdirectory(
-            title="Open a folder ...",
-            initialdir = "C:\\Users\\"
-        )
+def open_folder(path: str=None):
+    try:
+        if path is None:
+            path = filedialog.askdirectory(
+                title="Open a folder ...",
+                initialdir = "C:\\Users\\"
+            )
         list_of_files = []
         for i in os.listdir(path):
             path_to_the_file = os.path.join(path, i)
@@ -83,24 +84,7 @@ def open_folder():
         work_dir["Name"] = path.split("/")[-1]
         work_dir["Files"] = list_of_files
 
-        # temporary_list = []
-        # for root, dirs, files in os.walk(path):
-        #     temporary_list.append(
-        #         {"Path":root,
-        #          "Name":root.split("\\")[-1],
-        #          "DirectoryFolders":dirs,
-        #          "DirectoryFiles":files})
-        # root = temporary_list[0]
-        # temporary_list = temporary_list[1:]
-
-        # work_dir["Path"] = root.get("Path")
-        # work_dir["Name"] = path.split("/")[-1]
-        # work_dir["DirectoryFolders"] = root.get("DirectoryFolders")
-        # work_dir["DirectoryFiles"] = root.get("DirectoryFiles")
-        # work_dir["SubDirectories"] = temporary_list
-
-        # print(work_dir)
-
         return work_dir
-    # except IndexError:
-    #     return;
+    except Exception as e:
+        print(f"Can't OPEN the directory, {e}")
+        return e;
