@@ -47,30 +47,22 @@ class MainMenu(ttk.Menu):
         self.theme_menu.add_command(label="Settings")
 
     def open_file(self):
-        path = f.get_file()
-        with open(path.name, "rb") as file:
-            file_name = path.name.split("/")[-1]
-            
-            self.container.tab_new = TabFrame(self.container.notebook, file_name)
-            self.container.notebook.add_tab(self.container.tab_new, file_name)
-            self.container.tab_new.text_screen.insert(
-                index=1.0, chars=file.read()
-            )
-            self.container.tab_new.tab_file_path = path.name
-            self.container.notebook.select(self.container.tab_new)
+        f.get_file(self.container.notebook)
 
     def save_file(self):
         current_tab = self.container.notebook.get_selected()
         if current_tab.tab_file_path is None:
             self.save_file_as()
         else:
-            text = current_tab.text_screen.get(1.0, 'end')
-            f.save_file_path(text, current_tab.tab_file_path)
-
-    def save_file_as(self):
-        tab = self.container.notebook.get_selected()
-        text = tab.text_screen.get(1.0, 'end')
-        f.save_file_path(text)
+            text = current_tab.text_screen.get(1.0, 'end') # I don't like this: if the text
+            f.save_file_path(text, current_tab.tab_file_path) # is too big, the size of text
+                                            # variable will be enormous, should parse the text
+    def save_file_as(self):                     # by chunks; gotta solve this issue
+        current_tab = self.container.notebook.get_selected()
+        text = current_tab.text_screen.get(1.0, 'end') # here it is, as well
+        new_current_tab_file = f.save_file_path(text)
+        if new_current_tab_file is not None:
+            current_tab.tab_file_path = new_current_tab_file
     
     def open_folder(self):
         dir = f.get_folder()
