@@ -13,19 +13,14 @@ class MainMenu(ttk.Menu):
         self.file_menu = tk.Menu(self, bg=LIGHT, fg=LIGHT_FONT)
         self.add_cascade(label="File", menu=self.file_menu)
 
-        def new_tab():
-            tab = TabFrame(self.container.notebook)
-            self.container.notebook.add_tab(tab)
-        self.file_menu.add_command(label="New file...", command=new_tab)
+        self.file_menu.add_command(label="New file...", command=self.new_tab)
         self.file_menu.add_separator()
-        self.file_menu.add_command(label="Open file...", command=self.open_file)
-        self.file_menu.add_command(label="Open folder...", command=self.open_folder)
+        self.file_menu.add_command(label="Open file...", command=self.get_file)
+        self.file_menu.add_command(label="Open folder...", command=self.get_folder)
         self.file_menu.add_separator()
-        self.file_menu.add_command(label="Save", command=None)
-        self.file_menu.add_command(label="Save As...", command=self.save_file_as)
-        def close_tab_menu():
-            self.container.notebook.close_tab()
-        self.file_menu.add_command(label="Close", command=close_tab_menu)
+        self.file_menu.add_command(label="Save", command=self.set_file)
+        self.file_menu.add_command(label="Save As...", command=self.set_file_as)
+        self.file_menu.add_command(label="Close", command=self.close_tab)
         self.file_menu.add_command(label="Close folder", command=self.close_folder)
 
         self.edit_menu = tk.Menu(self, bg=LIGHT, fg=LIGHT_FONT)
@@ -41,89 +36,35 @@ class MainMenu(ttk.Menu):
         self.theme_menu = tk.Menu(self, bg=LIGHT, fg=LIGHT_FONT)
         self.add_cascade(label="Theme", menu=self.theme_menu)
 
-        self.theme_menu.add_command(label="Light",command=self.light_theme)
-        self.theme_menu.add_command(label="Dark", command=self.dark_theme)
+        self.theme_menu.add_command(label="Light",command=self.container.light_theme)
+        self.theme_menu.add_command(label="Dark", command=self.container.dark_theme)
         self.theme_menu.add_separator()
         self.theme_menu.add_command(label="Settings")
 
-    def light_theme(self):
-        THEME = LIGHT
-        THEME_FONT = LIGHT_FONT
-        THEME_HOVER = LIGHT_HOVER
-        THEME_SELECTED = LIGHT_SELECTED
-        s = ttk.Style()
-        
-        s.layout("TNotebook", [])
-        s.configure("TNotebook", background=THEME, foreground=THEME_FONT)
-        s.configure("TNotebook", tabmargins=0)
-        s.configure("TNotebook.Tab", background=THEME, foreground=THEME_FONT)
-        s.map("TNotebook.Tab", background=[("active", THEME_HOVER),
-                                           ("selected", THEME_SELECTED)],
-                               foreground=[("selected", THEME_FONT)])
-        s.configure("TLabel", background=THEME, foreground=THEME_FONT)
-        s.configure("TFrame", background=THEME)
-        s.configure("Treeview", background=THEME, foreground=THEME_FONT)
-        s.configure("Treeview.Heading", background=THEME, foreground=THEME_FONT)
-        s.map("Treeview", background=[("selected", THEME_SELECTED)],
-                          foreground=[("selected", THEME_FONT)])
-        s.configure("separator1.TFrame", background=THEME_FONT)
-
-        TabFrame.change_tab_theme(LIGHT, LIGHT_FONT)
-
-        self.container.selected_theme = "light"
+    def new_tab(self):
+        tab = TabFrame(self.container.notebook)
+        self.container.notebook.add_tab(tab)
     
-    def dark_theme(self):
-        THEME = DARK
-        THEME_FONT = DARK_FONT
-        THEME_HOVER = DARK_HOVER
-        THEME_SELECTED = DARK_SELECTED
-        s = ttk.Style()
-        
-        s.layout("TNotebook", [])
-        s.configure("TNotebook", background=THEME, foreground=THEME_FONT)
-        s.configure("TNotebook", tabmargins=0)
-        s.configure("TNotebook.Tab", background=THEME, foreground=THEME_FONT)
-        s.map("TNotebook.Tab", background=[("active", THEME_HOVER),
-                                           ("selected", THEME_SELECTED)],
-                               foreground=[("selected", THEME_FONT)])
-        s.configure("TLabel", background=THEME, foreground=THEME_FONT)
-        s.configure("TFrame", background=THEME)
-        s.configure("Treeview", background=THEME, foreground=THEME_FONT)
-        s.configure("Treeview.Heading", background=THEME, foreground=THEME_FONT)
-        s.map("Treeview", background=[("selected", THEME_SELECTED)],
-                          foreground=[("selected", THEME_FONT)])
-        s.configure("separator1.TFrame", background=THEME_FONT)
+    def close_tab(self):
+        self.container.notebook.close_tab()
 
-        TabFrame.change_tab_theme(DARK, DARK_FONT)
+    def get_file(self):
+        file = f.open_file(self.container.notebook)
 
-        self.container.selected_theme = "dark"
+    def set_file(self):
+        file = f.save_file(self.container.notebook)
 
-    def open_file(self):
-        path = f.get_file()
-        with open(path.name, "rb") as file:
-            file_name = path.name.split("/")[-1]
-            
-            self.container.tab = TabFrame(self.container.notebook, file_name)
-            self.container.notebook.add_tab(self.container.tab, file_name)
-            self.container.tab.text_screen.insert(
-                index=1.0, chars=file.read()
-            )
-            self.container.notebook.select(self.container.tab)
+    def set_file_as(self):                     
+        file = f.save_file(self.container.notebook, force=True)
     
-    def open_folder(self):
-        dir = f.get_folder()
-        print(dir)
+    def get_folder(self):
+        dir = f.open_folder()
         self.container.sidebar.open_directory(f.work_dir.get("Name"))
     
     def close_folder(self):
-        f.work_dir["Path"] = None
-        f.work_dir["Name"] = None
-        f.work_dir["SubDirectories"] = {}
-        f.work_dir["Files"] = []
-        print(f.work_dir)
+        dir = f.work_dir
+        dir["Path"] = None
+        dir["Name"] = None
+        dir["SubDirectories"] = {}
+        dir["DirectoryFiles"] = []
         self.container.sidebar.forget_directory()
-    
-    def save_file_as(self):
-        tab = self.container.notebook.get_selected()
-        text = tab.text_screen.get(1.0, 'end')
-        filedialogs.save_file_path(text)
