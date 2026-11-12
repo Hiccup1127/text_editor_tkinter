@@ -24,12 +24,12 @@ class MainMenu(ttk.Menu):
         self.edit_menu = tk.Menu(self, bg=DARK, fg=DARK_FONT)
         self.add_cascade(label="Edit", menu=self.edit_menu)
 
-        self.edit_menu.add_command(label="Undo")
-        self.edit_menu.add_command(label="Redo")
+        self.edit_menu.add_command(label="Undo", command=self.undo_operation)
+        self.edit_menu.add_command(label="Redo", command=self.redo_operation)
         self.edit_menu.add_separator()
-        self.edit_menu.add_command(label="Cut")
-        self.edit_menu.add_command(label="Copy")
-        self.edit_menu.add_command(label="Paste")
+        self.edit_menu.add_command(label="Cut", command=self.cut_selected)
+        self.edit_menu.add_command(label="Copy", command=self.copy_selected)
+        self.edit_menu.add_command(label="Paste", command=self.paste_selected)
 
         self.theme_menu = tk.Menu(self, bg=LIGHT, fg=LIGHT_FONT)
         self.add_cascade(label="Theme", menu=self.theme_menu)
@@ -56,3 +56,33 @@ class MainMenu(ttk.Menu):
 
     def set_file_as(self):                     
         file = f.save_file(self.container.notebook, force=True)
+
+
+    def undo_operation(self):
+        tab = self.container.notebook.get_selected()
+        tab.text_screen.edit_undo()
+    
+    def redo_operation(self):
+        tab = self.container.notebook.get_selected()
+        tab.text_screen.edit_redo()
+
+    def cut_selected(self):
+        tab = self.container.notebook.get_selected()
+        content = tab.text_screen.selection_get()
+        self.container.clipboard_clear()
+        self.container.clipboard_append(content)
+        tab.text_screen.delete(
+            tab.text_screen.index("sel.first"),
+            tab.text_screen.index("sel.last"))
+
+    def copy_selected(self):
+        tab = self.container.notebook.get_selected()
+        content = tab.text_screen.selection_get()
+        self.container.clipboard_clear()
+        self.container.clipboard_append(content)
+
+    def paste_selected(self):
+        tab = self.container.notebook.get_selected()
+        tab.text_screen.insert(
+            index='end',
+            chars=self.container.selection_get(selection="CLIPBOARD"))
