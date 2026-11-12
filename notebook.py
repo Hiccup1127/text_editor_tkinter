@@ -1,6 +1,8 @@
 import tkinter as tk
 import ttkbootstrap as ttk
-import tkinter.scrolledtext as st 
+import tkinter.scrolledtext as st
+
+import tkinter.font as tkfont
 
 import app
 
@@ -21,7 +23,6 @@ class MainNotebook(ttk.Notebook):
     def change_tab(self, label: str="untitled"):
         current_tab_head = self.tab(self.select(), text=label)
         current_tab_head["text"] = label
-        print(current_tab_head)
 
     def close_tab(self):
         tab = self.get_selected()
@@ -64,13 +65,16 @@ class TabFrame(ttk.Frame):
         self.__class__.instances.append(
             (self, self.tab_name, self.tab_id, self.tab_position))
 
-
+        font = tkfont.Font(font=app.TEXT_FONT)
+        tab_width = font.measure("  " * 4)
         self.text_frame = ttk.Frame(self)
         self.text_screen = st.ScrolledText(self.text_frame,
             background=app.LIGHT,
             insertbackground=app.LIGHT_FONT,
             foreground=app.LIGHT_FONT,
-            font=app.TEXT_FONT
+            font=app.TEXT_FONT,
+            undo=True,
+            tabs=tab_width,
         )
         self.text_screen.pack(expand=True, fill="both", side="right")
         self.text_frame.pack(expand=True, fill="both")
