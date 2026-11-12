@@ -10,20 +10,18 @@ class MainMenu(ttk.Menu):
         super().__init__(container, **kwargs)
         self.container = container
 
-        self.file_menu = tk.Menu(self, bg=LIGHT, fg=LIGHT_FONT)
+        self.file_menu = tk.Menu(self, bg=DARK, fg=DARK_FONT)
         self.add_cascade(label="File", menu=self.file_menu)
 
         self.file_menu.add_command(label="New file...", command=self.new_tab)
-        self.file_menu.add_separator()
         self.file_menu.add_command(label="Open file...", command=self.get_file)
-        self.file_menu.add_command(label="Open folder...", command=self.get_folder)
-        self.file_menu.add_separator()
         self.file_menu.add_command(label="Save", command=self.set_file)
         self.file_menu.add_command(label="Save As...", command=self.set_file_as)
-        self.file_menu.add_command(label="Close", command=self.close_tab)
-        self.file_menu.add_command(label="Close folder", command=self.close_folder)
+        self.file_menu.add_command(label="Close file", command=self.close_tab)
+        self.file_menu.add_separator()
+        self.file_menu.add_command(label="Exit", command=self.container.destroy)
 
-        self.edit_menu = tk.Menu(self, bg=LIGHT, fg=LIGHT_FONT)
+        self.edit_menu = tk.Menu(self, bg=DARK, fg=DARK_FONT)
         self.add_cascade(label="Edit", menu=self.edit_menu)
 
         self.edit_menu.add_command(label="Undo")
@@ -36,10 +34,12 @@ class MainMenu(ttk.Menu):
         self.theme_menu = tk.Menu(self, bg=LIGHT, fg=LIGHT_FONT)
         self.add_cascade(label="Theme", menu=self.theme_menu)
 
-        self.theme_menu.add_command(label="Light",command=self.container.light_theme)
-        self.theme_menu.add_command(label="Dark", command=self.container.dark_theme)
-        self.theme_menu.add_separator()
-        self.theme_menu.add_command(label="Settings")
+        self.theme_menu.add_command(label="Light",
+            command=lambda:self.container.set_theme(LIGHT,
+            LIGHT_FONT, LIGHT_HOVER, LIGHT_SELECTED))
+        self.theme_menu.add_command(label="Dark",
+            command=lambda:self.container.set_theme(DARK,
+            DARK_FONT, DARK_HOVER,DARK_SELECTED))
 
     def new_tab(self):
         tab = TabFrame(self.container.notebook)
@@ -56,14 +56,3 @@ class MainMenu(ttk.Menu):
 
     def set_file_as(self):                     
         file = f.save_file(self.container.notebook, force=True)
-    
-    def get_folder(self):
-        dir = f.open_folder()
-        self.container.sidebar.open_directory(dir)
-    
-    def close_folder(self):
-        dir = f.work_dir
-        dir["Path"] = None
-        dir["Name"] = None
-        dir["Files"] = []
-        self.container.sidebar.forget_directory()

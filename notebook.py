@@ -21,7 +21,6 @@ class MainNotebook(ttk.Notebook):
     def change_tab(self, label: str="untitled"):
         current_tab_head = self.tab(self.select(), text=label)
         current_tab_head["text"] = label
-        print(current_tab_head)
 
     def close_tab(self):
         tab = self.get_selected()
